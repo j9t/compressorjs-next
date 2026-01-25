@@ -1,20 +1,17 @@
-# Compressor.js (test)
+# Compressor.js
 
-[![Coverage Status](https://img.shields.io/codecov/c/github/fengyuanchen/compressorjs.svg)](https://codecov.io/gh/fengyuanchen/compressorjs) [![Downloads](https://img.shields.io/npm/dm/compressorjs.svg)](https://www.npmjs.com/package/compressorjs) [![Version](https://img.shields.io/npm/v/compressorjs.svg)](https://www.npmjs.com/package/compressorjs) [![Gzip Size](https://img.shields.io/bundlephobia/minzip/compressorjs.svg)](https://unpkg.com/compressorjs/dist/compressor.common.js)
+[![Downloads](https://img.shields.io/npm/dm/compressorjs-next.svg)](https://www.npmjs.com/package/compressorjs-next) [![Version](https://img.shields.io/npm/v/compressorjs-next.svg)](https://www.npmjs.com/package/compressorjs-next)
 
-Test fork of [Fengyuan Chen's Compressor.js library](https://github.com/fengyuanchen/compressorjs).
+Fork of [Fengyuan Chen's Compressor.js](https://github.com/fengyuanchen/compressorjs).
 
-> JavaScript image compressor. Uses the Browser's native [HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) method to do the compression work, which means it is **lossy compression**, **asynchronous**, and has **different compression effects in different browsers**. Generally use this to precompress a image on the client side before uploading it.
-
-- [Website](https://fengyuanchen.github.io/compressorjs)
+> JavaScript image compressor. Uses the browser's native [HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) method to do the compression work, which means it is **lossy compression**, **asynchronous**, and has **different compression effects in different browsers**. Generally use this to precompress an image on the client side before uploading it.
 
 ## Table of contents
 
-- [Main Files](#main-files)
+- [Main files](#main-files)
 - [Getting started](#getting-started)
 - [Options](#options)
 - [Methods](#methods)
-- [No conflict](#no-conflict)
 - [Browser support](#browser-support)
 - [Contributing](#contributing)
 - [Versioning](#versioning)
@@ -35,7 +32,7 @@ dist/
 ### Install
 
 ```shell
-npm install compressorjs
+npm install compressorjs-next
 ```
 
 ### Usage
@@ -67,7 +64,7 @@ The options for compressing. Check out the available [options](#options).
 
 ```js
 import axios from 'axios';
-import Compressor from 'compressorjs';
+import Compressor from 'compressorjs-next';
 
 document.getElementById('file').addEventListener('change', (e) => {
   const file = e.target.files[0];
@@ -330,19 +327,6 @@ const compressor = new Compressor(file);
 compressor.abort();
 ```
 
-## No conflict
-
-If you have to use another compressor with the same namespace, just call the `Compressor.noConflict` static method to revert to it.
-
-```html
-<script src="other-compressor.js"></script>
-<script src="compressor.js"></script>
-<script>
-  Compressor.noConflict();
-  // Code that uses other `Compressor` can follow here.
-</script>
-```
-
 ## Browser support
 
 - Chrome (latest)
@@ -350,7 +334,6 @@ If you have to use another compressor with the same namespace, just call the `Co
 - Safari (latest)
 - Opera (latest)
 - Edge (latest)
-- Internet Explorer 10+
 
 ## Contributing
 
@@ -362,6 +345,6 @@ Maintained under the [Semantic Versioning guidelines](https://semver.org/).
 
 ## License
 
-[MIT](https://opensource.org/licenses/MIT) © [Chen Fengyuan](https://chenfengyuan.com/)
+[MIT](https://opensource.org/licenses/MIT) © [Chen Fengyuan](https://chenfengyuan.com/), [Jens Oliver Meiert](https://meiert.com/)
 
 [⬆ back to top](#table-of-contents)

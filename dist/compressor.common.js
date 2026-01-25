@@ -9,16 +9,6 @@
  */
 'use strict';
 
-function _extends() {
-  return _extends = Object.assign ? Object.assign.bind() : function (n) {
-    for (var e = 1; e < arguments.length; e++) {
-      var t = arguments[e];
-      for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
-    }
-    return n;
-  }, _extends.apply(null, arguments);
-}
-
 var DEFAULTS = {
   /**
    * Indicates if output the original image instead of the compressed one
@@ -171,7 +161,7 @@ function isImageType(value) {
  * @returns {boolean} Returns the image extension.
  */
 function imageTypeToExtension(value) {
-  let extension = isImageType(value) ? value.substr(6) : '';
+  let extension = isImageType(value) ? value.slice(6) : '';
   if (extension === 'jpeg') {
     extension = 'jpg';
   }
@@ -527,7 +517,7 @@ class Compressor {
           // as some iOS browsers will render image with its orientation
           orientation = resetAndGetOrientation(result);
           if (orientation > 1) {
-            _extends(data, parseOrientation(orientation));
+            Object.assign(data, parseOrientation(orientation));
           }
         }
         if (retainExif) {
@@ -835,7 +825,7 @@ class Compressor {
    * @param {Object} options - The new default options.
    */
   static setDefaults(options) {
-    _extends(DEFAULTS, options);
+    Object.assign(DEFAULTS, options);
   }
 }
 

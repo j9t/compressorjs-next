@@ -26,7 +26,7 @@ export function isImageType(value) {
  * @returns {boolean} Returns the image extension.
  */
 export function imageTypeToExtension(value) {
-  let extension = isImageType(value) ? value.substr(6) : '';
+  let extension = isImageType(value) ? value.slice(6) : '';
 
   if (extension === 'jpeg') {
     extension = 'jpg';

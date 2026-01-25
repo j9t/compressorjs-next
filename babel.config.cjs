@@ -7,9 +7,6 @@ module.exports = {
       },
     ],
   ],
-  plugins: [
-    '@babel/plugin-transform-object-assign',
-  ],
   env: {
     test: {
       plugins: [

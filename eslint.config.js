@@ -2,7 +2,7 @@ import js from '@eslint/js';
 
 export default [
   {
-    ignores: ['dist/**', 'docs/js/**', 'coverage/**', 'eslint.config.js'],
+    ignores: ['dist/**', 'docs/js/**', 'coverage/**', '*.config.js', '*.config.cjs', 'test/*.cjs'],
   },
   js.configs.recommended,
   {
@@ -65,22 +65,6 @@ export default [
         expect: 'readonly',
         setTimeout: 'readonly',
         Compressor: 'readonly',
-      },
-    },
-    rules: {
-      'no-param-reassign': 'off',
-    },
-  },
-  {
-    files: ['**/*.config.js', '.eslintrc', 'test/karma.conf.js', 'karma.conf.js'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'commonjs',
-      globals: {
-        module: 'writable',
-        require: 'readonly',
-        __dirname: 'readonly',
-        process: 'readonly',
       },
     },
     rules: {

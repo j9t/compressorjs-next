@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const rollupConfig = require('../rollup.config');
+const rollupConfig = require('../rollup.config.cjs');
 
 process.env.CHROME_BIN = puppeteer.executablePath();
 
