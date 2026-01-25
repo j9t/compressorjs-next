@@ -40,7 +40,7 @@
   text-decoration: none;
 }
 
-@media (min-width: 768px) {
+@media (width >= 768px) {
   .carbonads {
     float: right;
     margin-bottom: -1rem;

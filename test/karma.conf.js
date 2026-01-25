@@ -17,7 +17,8 @@ module.exports = (config) => {
       reports: ['html', 'lcovonly', 'text-summary'],
     },
     files: [
-      'src/index.js',
+      'test/setup.js',
+      'node_modules/karma-chai/adapter.js',
       'test/helpers.js',
       'test/specs/**/*.spec.js',
       {
@@ -25,9 +26,9 @@ module.exports = (config) => {
         included: false,
       },
     ],
-    frameworks: ['mocha', 'chai'],
+    frameworks: ['mocha'],
     preprocessors: {
-      'src/index.js': ['rollup'],
+      'test/setup.js': ['rollup'],
       'test/helpers.js': ['rollup'],
       'test/specs/**/*.spec.js': ['rollup'],
     },
@@ -36,7 +37,6 @@ module.exports = (config) => {
       plugins: rollupConfig.plugins,
       output: {
         format: 'iife',
-        name: rollupConfig.output[0].name,
         sourcemap: 'inline',
       },
     },
