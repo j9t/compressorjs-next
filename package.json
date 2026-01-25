@@ -1,0 +1,92 @@
+{
+  "name": "compressorjs",
+  "version": "1.2.1",
+  "description": "JavaScript image compressor.",
+  "main": "dist/compressor.common.js",
+  "module": "dist/compressor.esm.js",
+  "browser": "dist/compressor.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "src",
+    "dist",
+    "types"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "clean": "del-cli dist",
+    "compress": "uglifyjs dist/compressor.js -o dist/compressor.min.js -c -m --comments /^!/",
+    "dev": "rollup -c -m -w",
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:css": "stylelint docs/**/*.css --fix",
+    "lint:js": "eslint src test *.js --fix",
+    "prepare": "husky install",
+    "release": "npm run clean && npm run lint && npm run build && npm run compress && npm test",
+    "start": "npm run dev",
+    "test": "cross-env NODE_ENV=test karma start test/karma.conf.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fengyuanchen/compressorjs.git"
+  },
+  "keywords": [
+    "image",
+    "compress",
+    "compressor",
+    "compressor.js",
+    "image-compressor",
+    "lossy-compression",
+    "javascript",
+    "front-end",
+    "web"
+  ],
+  "author": {
+    "name": "Chen Fengyuan",
+    "url": "https://chenfengyuan.com/"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fengyuanchen/compressorjs/issues"
+  },
+  "homepage": "https://fengyuanchen.github.io/compressorjs",
+  "dependencies": {
+    "blueimp-canvas-to-blob": "^3.29.0",
+    "is-blob": "^2.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/plugin-transform-object-assign": "^7.25.9",
+    "@babel/preset-env": "^7.26.0",
+    "@commitlint/cli": "^17.8.1",
+    "@commitlint/config-conventional": "^17.8.1",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "^21.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-replace": "^3.1.0",
+    "babel-plugin-istanbul": "^6.1.1",
+    "chai": "^4.5.0",
+    "change-case": "^4.1.2",
+    "codecov": "^3.8.3",
+    "create-banner": "^2.0.0",
+    "cross-env": "^7.0.3",
+    "del-cli": "^5.1.0",
+    "eslint": "^8.35.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.31.0",
+    "husky": "^8.0.3",
+    "karma": "^6.4.4",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage-istanbul-reporter": "^3.0.3",
+    "karma-mocha": "^2.0.1",
+    "karma-mocha-reporter": "^2.2.5",
+    "karma-rollup-preprocessor": "^7.0.8",
+    "lint-staged": "^13.3.0",
+    "mocha": "^10.8.2",
+    "puppeteer": "^19.7.2",
+    "rollup": "^2.79.2",
+    "stylelint": "^15.11.0",
+    "stylelint-config-standard": "^30.0.1",
+    "stylelint-order": "^6.0.4",
+    "uglify-js": "^3.19.3"
+  }
+}

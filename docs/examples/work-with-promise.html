@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Compressor.js</title>
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap@4/dist/css/bootstrap.min.css" crossorigin="anonymous">
+  <style>
+    img {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <h1>Work with promise</h1>
+    <p class="lead">Easy to emulate a complete hook function with <code>Promise.prototype.finally()</code></p>
+    <hr>
+    <div class="row">
+      <div class="col-sm-6">
+        <h3>Input</h3>
+        <div id="input">
+          <img id="image" src="../images/picture.jpg" alt="Picture">
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <h3>Output</h3>
+        <div id="output"></div>
+      </div>
+    </div>
+  </div>
+  <script src="../js/compressor.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      var Compressor = window.Compressor;
+      var URL = window.URL || window.webkitURL;
+      var image = document.getElementById('image');
+      var output = document.getElementById('output');
+      var xhr = new XMLHttpRequest();
+
+      xhr.onload = function () {
+        new Promise((resolve, reject) => {
+          new Compressor(xhr.response, {
+            success: resolve,
+            error: reject,
+          });
+        }).then((result) => {
+          console.log('Compress success');
+          var newImage = new Image();
+
+          newImage.src = URL.createObjectURL(result);
+          newImage.alt = 'Compressed image';
+          output.appendChild(newImage);
+        }).catch((err) => {
+          console.log('Compress error');
+          window.alert(err.message);
+        }).finally(() => {
+          console.log('Compress complete');
+        });
+      };
+
+      xhr.open('GET', image.src);
+      xhr.responseType = 'blob';
+      xhr.send();
+    });
+  </script>
+</body>
+</html>
