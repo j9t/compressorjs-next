@@ -1,6 +1,6 @@
 {
-  "name": "compressorjs",
-  "version": "1.2.1",
+  "name": "compressorjs-next",
+  "version": "2.0.0",
   "description": "JavaScript image compressor.",
   "main": "dist/compressor.common.js",
   "module": "dist/compressor.esm.js",
@@ -14,19 +14,19 @@
   "scripts": {
     "build": "rollup -c",
     "clean": "del-cli dist",
-    "compress": "uglifyjs dist/compressor.js -o dist/compressor.min.js -c -m --comments /^!/",
+    "compress": "terser dist/compressor.js -o dist/compressor.min.js -c -m --comments /^!/",
     "dev": "rollup -c -m -w",
     "lint": "npm run lint:js && npm run lint:css",
     "lint:css": "stylelint docs/**/*.css --fix",
     "lint:js": "eslint src test *.js --fix",
-    "prepare": "husky install",
+    "prepare": "husky",
     "release": "npm run clean && npm run lint && npm run build && npm run compress && npm test",
     "start": "npm run dev",
     "test": "cross-env NODE_ENV=test karma start test/karma.conf.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fengyuanchen/compressorjs.git"
+    "url": "git+https://github.com/j9t/compressorjs-next.git"
   },
   "keywords": [
     "image",
@@ -40,18 +40,20 @@
     "web"
   ],
   "author": {
-    "name": "Chen Fengyuan",
-    "url": "https://chenfengyuan.com/"
+    "name": "Jens Oliver Meiert",
+    "url": "https://meiert.com/"
   },
+  "contributors": [
+    {
+      "name": "Chen Fengyuan",
+      "url": "https://chenfengyuan.com/"
+    }
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fengyuanchen/compressorjs/issues"
+    "url": "https://github.com/j9t/compressorjs-next/issues"
   },
-  "homepage": "https://fengyuanchen.github.io/compressorjs",
-  "dependencies": {
-    "blueimp-canvas-to-blob": "^3.29.0",
-    "is-blob": "^3.0.0"
-  },
+  "homepage": "https://github.com/j9t/compressorjs-next",
   "devDependencies": {
     "@babel/core": "^7.28.6",
     "@babel/plugin-transform-object-assign": "^7.27.1",
@@ -61,17 +63,11 @@
     "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
-    "@rollup/plugin-replace": "^6.0.3",
     "babel-plugin-istanbul": "^7.0.1",
     "chai": "^6.2.2",
-    "change-case": "^5.4.4",
-    "codecov": "^3.8.3",
-    "create-banner": "^2.0.0",
     "cross-env": "^10.1.0",
     "del-cli": "^7.0.0",
     "eslint": "^9.39.2",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.32.0",
     "husky": "^9.1.7",
     "karma": "^6.4.4",
     "karma-chai": "^0.1.0",
@@ -87,6 +83,6 @@
     "stylelint": "^17.0.0",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-order": "^7.0.1",
-    "uglify-js": "^3.19.3"
+    "terser": "^5.37.0"
   }
 }

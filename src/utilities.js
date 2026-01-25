@@ -9,17 +9,6 @@ import {
  */
 export const isPositiveNumber = (value) => value > 0 && value < Infinity;
 
-const { slice } = Array.prototype;
-
-/**
- * Convert array-like or iterable object to an array.
- * @param {*} value - The value to convert.
- * @returns {Array} Returns a new array.
- */
-export function toArray(value) {
-  return Array.from ? Array.from(value) : slice.call(value);
-}
-
 const REGEXP_IMAGE_TYPE = /^image\/.+$/;
 
 /**
@@ -82,9 +71,7 @@ export function arrayBufferToDataURL(arrayBuffer, mimeType) {
   let uint8 = new Uint8Array(arrayBuffer);
 
   while (uint8.length > 0) {
-    // XXX: Babel's `toConsumableArray` helper will throw error in IE or Safari 9
-     
-    chunks.push(fromCharCode.apply(null, toArray(uint8.subarray(0, chunkSize))));
+    chunks.push(fromCharCode.apply(null, Array.from(uint8.subarray(0, chunkSize))));
     uint8 = uint8.subarray(chunkSize);
   }
 
@@ -286,7 +273,7 @@ export function getAdjustedSizes(
  * @returns {Array} The read Exif information.
  */
 export function getExif(arrayBuffer) {
-  const array = toArray(new Uint8Array(arrayBuffer));
+  const array = Array.from(new Uint8Array(arrayBuffer));
   const { length } = array;
   const segments = [];
   let start = 0;
@@ -329,7 +316,7 @@ export function getExif(arrayBuffer) {
  * @returns {ArrayBuffer} The transformed array buffer.
  */
 export function insertExif(arrayBuffer, exifArray) {
-  const array = toArray(new Uint8Array(arrayBuffer));
+  const array = Array.from(new Uint8Array(arrayBuffer));
 
   if (array[2] !== 0xFF || array[3] !== 0xE0) {
     return arrayBuffer;
@@ -339,4 +326,14 @@ export function insertExif(arrayBuffer, exifArray) {
   const newArrayBuffer = [0xFF, 0xD8].concat(exifArray, array.slice(4 + app0Length));
 
   return new Uint8Array(newArrayBuffer);
+}
+
+/**
+ * Convert a Uint8Array to a Blob.
+ * @param {Uint8Array} uint8Array - The Uint8Array to convert.
+ * @param {string} mimeType - The mime type of the Blob.
+ * @returns {Blob} The resulting Blob.
+ */
+export function uint8ArrayToBlob(uint8Array, mimeType) {
+  return new Blob([uint8Array], { type: mimeType });
 }

@@ -1,11 +1,8 @@
-import toBlob from 'blueimp-canvas-to-blob';
-import isBlob from 'is-blob';
 import DEFAULTS from './defaults';
 import {
   WINDOW,
 } from './constants';
 import {
-  arrayBufferToDataURL,
   getAdjustedSizes,
   imageTypeToExtension,
   isImageType,
@@ -13,14 +10,15 @@ import {
   normalizeDecimalNumber,
   parseOrientation,
   resetAndGetOrientation,
+  arrayBufferToDataURL,
   getExif,
   insertExif,
+  uint8ArrayToBlob,
 } from './utilities';
 
 const { ArrayBuffer, FileReader } = WINDOW;
 const URL = WINDOW.URL || WINDOW.webkitURL;
 const REGEXP_EXTENSION = /\.\w+$/;
-const AnotherCompressor = WINDOW.Compressor;
 
 /**
  * Creates a new image compressor.
@@ -48,7 +46,7 @@ export default class Compressor {
   init() {
     const { file, options } = this;
 
-    if (!isBlob(file)) {
+    if (!(file instanceof Blob)) {
       this.fail(new Error('The first argument must be a File or Blob object.'));
       return;
     }
@@ -309,10 +307,10 @@ export default class Compressor {
         });
 
         if (blob && isJPEGImage && options.retainExif && this.exif && this.exif.length > 0) {
-          const next = (arrayBuffer) => done(toBlob(arrayBufferToDataURL(
-            insertExif(arrayBuffer, this.exif),
-            options.mimeType,
-          )));
+          const next = (arrayBuffer) => {
+            const withExif = insertExif(arrayBuffer, this.exif);
+            done(uint8ArrayToBlob(withExif, options.mimeType));
+          };
 
           if (blob.arrayBuffer) {
             blob.arrayBuffer().then(next).catch(() => {
@@ -342,11 +340,7 @@ export default class Compressor {
       }
     };
 
-    if (canvas.toBlob) {
-      canvas.toBlob(callback, options.mimeType, options.quality);
-    } else {
-      callback(toBlob(canvas.toDataURL(options.mimeType, options.quality)));
-    }
+    canvas.toBlob(callback, options.mimeType, options.quality);
   }
 
   done({
@@ -427,15 +421,6 @@ export default class Compressor {
         this.fail(new Error('The compression process has been aborted.'));
       }
     }
-  }
-
-  /**
-   * Get the no conflict compressor class.
-   * @returns {Compressor} The compressor class.
-   */
-  static noConflict() {
-    window.Compressor = AnotherCompressor;
-    return Compressor;
   }
 
   /**

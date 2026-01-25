@@ -52,20 +52,6 @@ describe('Compressor', () => {
     });
   });
 
-  it('should work with polyfill library when `canvas.toBlob` is not supported', (done) => {
-    window.loadImageAsBlob('/base/docs/images/picture.jpg', (image) => {
-      new Compressor(image, {
-        drew(context, canvas) {
-          canvas.toBlob = null;
-        },
-        success(result) {
-          expect(result).to.be.a('blob');
-          done();
-        },
-      });
-    });
-  });
-
   it('should work when the `canvas.toBlob` function does not output any blob object', (done) => {
     window.loadImageAsBlob('/base/docs/images/picture.jpg', (image) => {
       new Compressor(image, {

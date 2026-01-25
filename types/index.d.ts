@@ -24,10 +24,9 @@ declare namespace Compressor {
 declare class Compressor {
   constructor(file: File | Blob, options?: Compressor.Options);
   abort(): void;
-  static noConflict(): Compressor;
   static setDefaults(options: Compressor.Options): void;
 }
 
-declare module 'compressorjs' {
+declare module 'compressorjs-next' {
   export default Compressor;
 }

@@ -34,7 +34,6 @@ You have tested in the following browsers: (Providing a detailed version will be
 - [ ] Firefox
 - [ ] Safari
 - [ ] Edge
-- [ ] IE
 
 If adding a **new feature**, the PR's description includes:
 
