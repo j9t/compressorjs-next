@@ -1,10 +1,10 @@
 # Contributing to Compressor.js
 
-> Based on [Angular's contributing guidelines](https://github.com/angular/angular/blob/master/CONTRIBUTING.md).
+> Based on [Angular’s contributing guidelines](https://github.com/angular/angular/blob/master/CONTRIBUTING.md).
 
 We would love for you to contribute to Compressor.js and help make it even better than it is today! As a contributor, here are the guidelines we would like you to follow:
 
-- [Contributing to Compressor.js](#contributing-to-compressorjs)
+* [Contributing to Compressor.js](#contributing-to-compressorjs)
   - [Code of Conduct](#code-of-conduct)
   - [Question or Problem](#question-or-problem)
   - [Issues and Bugs](#issues-and-bugs)
@@ -29,13 +29,13 @@ Help us keep Compressor.js open and inclusive. Please read and follow our [Code 
 
 ## Question or Problem
 
-Do not open issues for general support questions as we want to keep GitHub issues for bug reports and feature requests. You've got much better chances of getting your question answered on [Stack Overflow](https://stackoverflow.com/questions/tagged/compressorjs) where the questions should be tagged with tag `compressorjs`.
+Do not open issues for general support questions as we want to keep GitHub issues for bug reports and feature requests. You’ve got much better chances of getting your question answered on [Stack Overflow](https://stackoverflow.com/questions/tagged/compressorjs) where the questions should be tagged with tag `compressorjs`.
 
 Stack Overflow is a much better place to ask questions since:
 
-- There are thousands of people willing to help on Stack Overflow.
-- Questions and answers stay available for public viewing so your question/answer might help someone else.
-- Stack Overflow's voting system assures that the best answers are prominently visible.
+* There are thousands of people willing to help on Stack Overflow.
+* Questions and answers stay available for public viewing so your question/answer might help someone else.
+* Stack Overflow’s voting system assures that the best answers are prominently visible.
 
 To save you and our time, we will systematically close all issues that are requests for general support and redirect people to Stack Overflow.
 
@@ -49,8 +49,8 @@ You can *request* a new feature by [submitting an issue](#submitting-an-issue) t
 
 Please consider what kind of change it is:
 
-- For a **Major Feature**, first, open an issue and outline your proposal so that it can be discussed. This will also allow us to better coordinate our efforts, prevent duplication of work, and help you to craft the change so that it is successfully accepted into the project.
-- **Small Features** can be crafted and directly [submitted as a Pull Request](#submitting-a-pull-request-pr).
+* For a **Major Feature**, first, open an issue and outline your proposal so that it can be discussed. This will also allow us to better coordinate our efforts, prevent duplication of work, and help you to craft the change so that it is successfully accepted into the project.
+* **Small Features** can be crafted and directly [submitted as a Pull Request](#submitting-a-pull-request-pr).
 
 ## Submission Guidelines
 
@@ -60,15 +60,15 @@ Before you submit an issue, please search the [issue tracker](https://github.com
 
 We want to fix all the issues as soon as possible, but before fixing a bug we need to reproduce and confirm it. To reproduce bugs, we will systematically ask you to provide a minimal reproduction scenario using [CodePen](https://codepen.io/pen). Having a live, reproducible scenario gives us a wealth of important information without going back & forth to you with additional questions like:
 
-- version of Compressor.js used
-- 3rd-party libraries and their versions
-- and most importantly - a use-case that fails
+* version of Compressor.js used
+* 3rd-party libraries and their versions
+* and most importantly - a use-case that fails
 
 A minimal reproduction scenario using [CodePen](https://codepen.io/pen) allows us to quickly confirm a bug (or point out a coding problem) as well as confirm that we are fixing the right problem. If [CodePen](https://codepen.io/pen) is not a suitable way to demonstrate the problem (for example for issues related to our npm packaging), please create a standalone git repository demonstrating the problem.
 
 We will be insisting on a minimal reproduction scenario to save maintainers time and ultimately be able to fix more bugs. Interestingly, from our experience users often find coding problems themselves while preparing a minimal reproduction scenario. We understand that sometimes it might be hard to extract essentials bits of code from a larger code-base but we need to isolate the problem before we can fix it.
 
-Unfortunately, we are not able to investigate/fix bugs without a minimal reproduction scenario, so if we don't hear back from you we are going to close an issue that doesn't have enough info to be reproduced.
+Unfortunately, we are not able to investigate/fix bugs without a minimal reproduction scenario, so if we don’t hear back from you we are going to close an issue that doesn’t have enough info to be reproduced.
 
 You can file new issues by filling out our [new issue form](https://github.com/j9t/compressorjs-next/issues/new).
 
@@ -76,7 +76,7 @@ You can file new issues by filling out our [new issue form](https://github.com/j
 
 Before you submit your Pull Request (PR) consider the following guidelines:
 
-1. Search [GitHub](https://github.com/j9t/compressorjs-next/pulls) for an open or closed PR that relates to your submission. You don't want to duplicate effort.
+1. Search [GitHub](https://github.com/j9t/compressorjs-next/pulls) for an open or closed PR that relates to your submission. You don’t want to duplicate effort.
 1. Fork the **j9t/compressorjs-next** repo.
 1. Make your changes in a new git branch:
 
@@ -93,7 +93,7 @@ Before you submit your Pull Request (PR) consider the following guidelines:
     git commit -a
     ```
 
-    Note: the optional commit `-a` command-line option will automatically "add" and "rm" edited files.
+    Note: the optional commit `-a` command-line option will automatically “add” and “rm” edited files.
 1. Push your branch to GitHub:
 
     ```shell
@@ -111,7 +111,7 @@ Before you submit your Pull Request (PR) consider the following guidelines:
     git push -f
     ```
 
-That's it! Thank you for your contribution!
+That’s it! Thank you for your contribution!
 
 #### After your pull request is merged
 
@@ -145,9 +145,9 @@ After your pull request is merged, you can safely delete your branch and pull th
 
 To ensure consistency throughout the source code, keep these rules in mind as you are working:
 
-- All features or bug fixes **must be tested** by one or more specs (unit-tests).
-- All public API methods **must be documented**.
-- We follow [Airbnb's JavaScript Style Guide](https://github.com/airbnb/javascript).
+* All features or bug fixes **must be tested** by one or more specs (unit-tests).
+* All public API methods **must be documented**.
+* We follow [Airbnb’s JavaScript Style Guide](https://github.com/airbnb/javascript).
 
 ## Commit Message Guidelines
 
@@ -179,31 +179,31 @@ If the commit reverts a previous commit, it should begin with `revert: `, follow
 
 Must be one of the following:
 
-- **build**: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
-- **ci**: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
-- **docs**: Documentation only changes
-- **feat**: A new feature
-- **fix**: A bug fix
-- **perf**: A code change that improves performance
-- **refactor**: A code change that neither fixes a bug nor adds a feature
-- **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
-- **test**: Adding missing tests or correcting existing tests
+* **build**: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
+* **ci**: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
+* **docs**: Documentation only changes
+* **feat**: A new feature
+* **fix**: A bug fix
+* **perf**: A code change that improves performance
+* **refactor**: A code change that neither fixes a bug nor adds a feature
+* **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+* **test**: Adding missing tests or correcting existing tests
 
 ### Scope
 
-The scope could be anything specifying the place of the commit change. For example `move`, `zoom`, `rotate`, etc...
+The scope could be anything specifying the place of the commit change. For example `move`, `zoom`, `rotate`, etc.
 
 ### Subject
 
 The subject contains a succinct description of the change:
 
-- Use the imperative, present tense: "change" not "changed" nor "changes".
-- Don't capitalize the first letter.
-- No dot (.) at the end.
+* Use the imperative, present tense: “change” not “changed” or “changes”.
+* Don’t capitalize the first letter.
+* No dot (.) at the end.
 
 ### Body
 
-Just as in the **subject**, use the imperative, present tense: "change" not "changed" nor "changes". The body should include the motivation for the change and contrast this with previous behavior.
+Just as in the **subject**, use the imperative, present tense: “change” not “changed” or “changes”. The body should include the motivation for the change and contrast this with previous behavior.
 
 ### Footer
 

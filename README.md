@@ -2,20 +2,20 @@
 
 [![Downloads](https://img.shields.io/npm/dm/compressorjs-next.svg)](https://www.npmjs.com/package/compressorjs-next) [![Version](https://img.shields.io/npm/v/compressorjs-next.svg)](https://www.npmjs.com/package/compressorjs-next)
 
-Fork of [Fengyuan Chen's Compressor.js](https://github.com/fengyuanchen/compressorjs).
+Fork of [Fengyuan Chen’s Compressor.js](https://github.com/fengyuanchen/compressorjs).
 
-> JavaScript image compressor. Uses the browser's native [HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) method to do the compression work, which means it is **lossy compression**, **asynchronous**, and has **different compression effects in different browsers**. Generally use this to precompress an image on the client side before uploading it.
+> JavaScript image compressor. Uses the browser’s native [HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) method to do the compression work, which means it is **lossy compression**, **asynchronous**, and has **different compression effects in different browsers**. Generally use this to precompress an image on the client side before uploading it.
 
 ## Table of contents
 
-- [Main files](#main-files)
-- [Getting started](#getting-started)
-- [Options](#options)
-- [Methods](#methods)
-- [Browser support](#browser-support)
-- [Contributing](#contributing)
-- [Versioning](#versioning)
-- [License](#license)
+* [Main files](#main-files)
+* [Getting started](#getting-started)
+* [Options](#options)
+* [Methods](#methods)
+* [Browser support](#browser-support)
+* [Contributing](#contributing)
+* [Versioning](#versioning)
+* [License](#license)
 
 ## Main files
 
@@ -45,14 +45,14 @@ new Compressor(file[, options])
 
 **file**
 
-- Type: [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) or [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob)
+* Type: [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) or [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob)
 
 The target image file for compressing.
 
 **options**
 
-- Type: `Object`
-- Optional
+* Type: `Object`
+* Optional
 
 The options for compressing. Check out the available [options](#options).
 
@@ -106,44 +106,44 @@ If you want to change the global default options, You may use `Compressor.setDef
 
 ### strict
 
-- Type: `boolean`
-- Default: `true`
+* Type: `boolean`
+* Default: `true`
 
-Indicates whether to output the original image instead of the compressed one when the size of the compressed image is greater than the original one's, except the following cases:
+Indicates whether to output the original image instead of the compressed one when the size of the compressed image is greater than the original one’s, except the following cases:
 
-- The `retainExif` option is set to `true`.
-- The `mimeType` option is set and its value is different from the mime type of the image.
-- The `width` option is set and its value is greater than the natural width of the image.
-- The `height` option is set and its value is greater than the natural height of the image.
-- The `minWidth` option is set and its value is greater than the natural width of the image.
-- The `minHeight` option is set and its value is greater than the natural height of the image.
-- The `maxWidth` option is set and its value is less than the natural width of the image.
-- The `maxHeight` option is set and its value is less than the natural height of the image.
+* The `retainExif` option is set to `true`.
+* The `mimeType` option is set and its value is different from the mime type of the image.
+* The `width` option is set and its value is greater than the natural width of the image.
+* The `height` option is set and its value is greater than the natural height of the image.
+* The `minWidth` option is set and its value is greater than the natural width of the image.
+* The `minHeight` option is set and its value is greater than the natural height of the image.
+* The `maxWidth` option is set and its value is less than the natural width of the image.
+* The `maxHeight` option is set and its value is less than the natural height of the image.
 
 ### checkOrientation
 
-- Type: `boolean`
-- Default: `true`
+* Type: `boolean`
+* Default: `true`
 
-Indicates whether to read the image's Exif Orientation value (JPEG image only), and then rotate or flip the image automatically with the value.
+Indicates whether to read the image’s Exif Orientation value (JPEG image only), and then rotate or flip the image automatically with the value.
 
 **Notes:**
 
-- Don't trust this all the time as some JPEG images have incorrect (not standard) Orientation values.
-- If the size of the target image is too large (e.g., greater than 10 MB), you should disable this option to avoid an out-of-memory crash.
-- The image's Exif information will be removed after compressed, so if you need the Exif information, you may need to upload the original image as well.
+* Don’t trust this all the time as some JPEG images have incorrect (not standard) Orientation values.
+* If the size of the target image is too large (e.g., greater than 10 MB), you should disable this option to avoid an out-of-memory crash.
+* The image’s Exif information will be removed after compressed, so if you need the Exif information, you may need to upload the original image as well.
 
 ### retainExif
 
-- Type: `boolean`
-- Default: `false`
+* Type: `boolean`
+* Default: `false`
 
-Indicates whether to retain the image's Exif information after compressed.
+Indicates whether to retain the image’s Exif information after compressed.
 
 ### maxWidth
 
-- Type: `number`
-- Default: `Infinity`
+* Type: `number`
+* Default: `Infinity`
 
 The max-width of the output image. The value should be greater than `0`.
 
@@ -151,44 +151,44 @@ The max-width of the output image. The value should be greater than `0`.
 
 ### maxHeight
 
-- Type: `number`
-- Default: `Infinity`
+* Type: `number`
+* Default: `Infinity`
 
 The max height of the output image. The value should be greater than `0`.
 
 ### minWidth
 
-- Type: `number`
-- Default: `0`
+* Type: `number`
+* Default: `0`
 
 The min-width of the output image. The value should be greater than `0` and should not be greater than the `maxWidth`.
 
 ### minHeight
 
-- Type: `number`
-- Default: `0`
+* Type: `number`
+* Default: `0`
 
 The min-height of the output image. The value should be greater than `0` and should not be greater than the `maxHeight`.
 
 ### width
 
-- Type: `number`
-- Default: `undefined`
+* Type: `number`
+* Default: `undefined`
 
 The width of the output image. If not specified, the natural width of the original image will be used, or if the `height` option is set, the width will be computed automatically by the natural aspect ratio.
 
 ### height
 
-- Type: `number`
-- Default: `undefined`
+* Type: `number`
+* Default: `undefined`
 
 The height of the output image. If not specified, the natural height of the original image will be used, or if the `width` option is set, the height will be computed automatically by the natural aspect ratio.
 
 ### resize
 
-- Type: `string`
-- Default: `"none"`
-- Options: `"none"`, `"contain"`, and `"cover"`.
+* Type: `string`
+* Default: `"none"`
+* Options: `"none"`, `"contain"`, and `"cover"`.
 
 Sets how the size of the image should be resized to the container specified by the `width` and `height` options.
 
@@ -196,8 +196,8 @@ Sets how the size of the image should be resized to the container specified by t
 
 ### quality
 
-- Type: `number`
-- Default: `0.8`
+* Type: `number`
+* Default: `0.8`
 
 The quality of the output image. It must be a number between `0` and `1`. If this argument is anything else, the default values `0.92` and `0.80` are used for `image/jpeg` and `image/webp` respectively. Other arguments are ignored. Be careful to use `1` as it may make the size of the output image become larger.
 
@@ -219,9 +219,9 @@ The quality of the output image. It must be a number between `0` and `1`. If thi
 
 ### mimeType
 
-- Type: `string`
-- Default: `'auto'`
-- Options: `"auto"`, `"image/png"`, `"image/jpeg"`, and `"image/webp"`.
+* Type: `string`
+* Default: `'auto'`
+* Options: `"auto"`, `"image/png"`, `"image/jpeg"`, and `"image/webp"`.
 
 The mime type of the output image. By default, the original mime type of the source image file will be used.
 
@@ -229,9 +229,9 @@ The mime type of the output image. By default, the original mime type of the sou
 
 ### convertTypes
 
-- Type: `Array` or `string` (multiple types should be separated by commas)
-- Default: `["image/png"]`
-- Examples:
+* Type: `Array` or `string` (multiple types should be separated by commas)
+* Default: `["image/png"]`
+* Examples:
   - `["image/png", "image/webp"]`
   - `"image/png,image/webp"`
 
@@ -241,8 +241,8 @@ Files whose file type is included in this list, and whose file size exceeds the 
 
 ### convertSize
 
-- Type: `number`
-- Default: `5000000` (5 MB)
+* Type: `number`
+* Default: `5000000` (5 MB)
 
 Files whose file type is included in the `convertTypes` list, and whose file size exceeds this value will be converted to JPEGs. To disable this, just set the value to `Infinity`.
 
@@ -256,9 +256,9 @@ Files whose file type is included in the `convertTypes` list, and whose file siz
 
 ### beforeDraw(context, canvas)
 
-- Type: `Function`
-- Default: `null`
-- Parameters:
+* Type: `Function`
+* Default: `null`
+* Parameters:
   - `context`: The 2d rendering context of the canvas.
   - `canvas`: The canvas for compression.
 
@@ -276,9 +276,9 @@ new Compressor(file, {
 
 ### drew(context, canvas)
 
-- Type: `Function`
-- Default: `null`
-- Parameters:
+* Type: `Function`
+* Default: `null`
+* Parameters:
   - `context`: The 2d rendering context of the canvas.
   - `canvas`: The canvas for compression.
 
@@ -296,18 +296,18 @@ new Compressor(file, {
 
 ### success(result)
 
-- Type: `Function`
-- Default: `null`
-- Parameters:
+* Type: `Function`
+* Default: `null`
+* Parameters:
   - `result`: The compressed image (a `File` (**read only**) or `Blob` object).
 
 The hook function to execute when successful to compress the image.
 
 ### error(err)
 
-- Type: `Function`
-- Default: `null`
-- Parameters:
+* Type: `Function`
+* Default: `null`
+* Parameters:
   - `err`: The compression error (an `Error` object).
 
 The hook function executes when fails to compress the image.
@@ -323,17 +323,17 @@ Abort the compression process.
 ```js
 const compressor = new Compressor(file);
 
-// Do something...
+// Do something…
 compressor.abort();
 ```
 
 ## Browser support
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Opera (latest)
-- Edge (latest)
+* Chrome (latest)
+* Firefox (latest)
+* Safari (latest)
+* Opera (latest)
+* Edge (latest)
 
 ## Contributing
 
