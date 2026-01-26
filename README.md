@@ -1,10 +1,10 @@
 # Compressor.js Next
 
-[![Downloads](https://img.shields.io/npm/dm/compressorjs-next.svg)](https://www.npmjs.com/package/compressorjs-next) [![Version](https://img.shields.io/npm/v/compressorjs-next.svg)](https://www.npmjs.com/package/compressorjs-next)
+[![npm version](https://img.shields.io/npm/v/compressorjs-next.svg)](https://www.npmjs.com/package/compressorjs-next)
 
-Fork of [Fengyuan Chen’s Compressor.js](https://github.com/fengyuanchen/compressorjs).
+Modernized and maintained fork of [Fengyuan Chen’s Compressor.js](https://github.com/fengyuanchen/compressorjs).
 
-> JavaScript image compressor. Uses the browser’s native [HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) method to do the compression work, which means it is **lossy compression**, **asynchronous**, and has **different compression effects in different browsers**. Generally use this to precompress an image on the client side before uploading it.
+A JavaScript image compressor. Uses the browser’s native [HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) method to do the compression work, which means it is **lossy compression**, **asynchronous**, and has **different compression effects in different browsers**. Generally use this to precompress an image on the client side before uploading it.
 
 ## Table of contents
 
@@ -32,7 +32,7 @@ dist/
 ### Install
 
 ```shell
-npm install compressorjs-next
+npm i compressorjs-next
 ```
 
 ### Usage
@@ -43,13 +43,13 @@ npm install compressorjs-next
 new Compressor(file[, options])
 ```
 
-**file**
+**`file`**
 
 * Type: [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) or [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob)
 
 The target image file for compressing.
 
-**options**
+**`options`**
 
 * Type: `Object`
 * Optional
@@ -97,14 +97,12 @@ document.getElementById('file').addEventListener('change', (e) => {
 });
 ```
 
-[⬆ back to top](#table-of-contents)
-
 ## Options
 
 You may set compressor options with `new Compressor(file, options)`.
 If you want to change the global default options, You may use `Compressor.setDefaults(options)`.
 
-### strict
+### `strict`
 
 * Type: `boolean`
 * Default: `true`
@@ -120,7 +118,7 @@ Indicates whether to output the original image instead of the compressed one whe
 * The `maxWidth` option is set and its value is less than the natural width of the image.
 * The `maxHeight` option is set and its value is less than the natural height of the image.
 
-### checkOrientation
+### `checkOrientation`
 
 * Type: `boolean`
 * Default: `true`
@@ -129,62 +127,62 @@ Indicates whether to read the image’s Exif Orientation value (JPEG image only)
 
 **Notes:**
 
-* Don’t trust this all the time as some JPEG images have incorrect (not standard) Orientation values.
+* Don’t trust this all the time as some JPEG images have incorrect (not standard) `Orientation` values.
 * If the size of the target image is too large (e.g., greater than 10 MB), you should disable this option to avoid an out-of-memory crash.
 * The image’s Exif information will be removed after compressed, so if you need the Exif information, you may need to upload the original image as well.
 
-### retainExif
+### `retainExif`
 
 * Type: `boolean`
 * Default: `false`
 
 Indicates whether to retain the image’s Exif information after compressed.
 
-### maxWidth
+### `maxWidth`
 
 * Type: `number`
 * Default: `Infinity`
 
-The max-width of the output image. The value should be greater than `0`.
+The max width of the output image. The value should be greater than `0`.
 
-> Avoid getting a blank output image, you might need to set the `maxWidth` and `maxHeight` options to limited numbers, because of [the size limits of a canvas element](https://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element), recommend to use `4096` or lesser.
+Avoid getting a blank output image, you might need to set the `maxWidth` and `maxHeight` options to limited numbers, because of [the size limits of a canvas element](https://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element), recommend to use `4096` or lesser.
 
-### maxHeight
+### `maxHeight`
 
 * Type: `number`
 * Default: `Infinity`
 
 The max height of the output image. The value should be greater than `0`.
 
-### minWidth
+### `minWidth`
 
 * Type: `number`
 * Default: `0`
 
-The min-width of the output image. The value should be greater than `0` and should not be greater than the `maxWidth`.
+The min width of the output image. The value should be greater than `0` and should not be greater than the `maxWidth`.
 
-### minHeight
+### `minHeight`
 
 * Type: `number`
 * Default: `0`
 
-The min-height of the output image. The value should be greater than `0` and should not be greater than the `maxHeight`.
+The min height of the output image. The value should be greater than `0` and should not be greater than the `maxHeight`.
 
-### width
+### `width`
 
 * Type: `number`
 * Default: `undefined`
 
 The width of the output image. If not specified, the natural width of the original image will be used, or if the `height` option is set, the width will be computed automatically by the natural aspect ratio.
 
-### height
+### `height`
 
 * Type: `number`
 * Default: `undefined`
 
 The height of the output image. If not specified, the natural height of the original image will be used, or if the `width` option is set, the height will be computed automatically by the natural aspect ratio.
 
-### resize
+### `resize`
 
 * Type: `string`
 * Default: `"none"`
@@ -194,7 +192,7 @@ Sets how the size of the image should be resized to the container specified by t
 
 **Note:** This option only available when both the `width` and `height` options are specified.
 
-### quality
+### `quality`
 
 * Type: `number`
 * Default: `0.8`
@@ -205,29 +203,29 @@ The quality of the output image. It must be a number between `0` and `1`. If thi
 
 > Check out the documentation of the [HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) method for more detail.
 
-**Examples**:
+**Examples:**
 
-| Quality | Input size | Output size | Compression ratio | Description |
+| `quality` | Input size | Output size | Compression ratio | Description |
 | --- | --- | --- | --- | --- |
-| 0 | 2.12 MB | 114.61 KB | 94.72% | - |
-| 0.2 | 2.12 MB | 349.57 KB | 83.90% | - |
-| 0.4 | 2.12 MB | 517.10 KB | 76.18% | - |
+| 0 | 2.12 MB | 114.61 KB | 94.72% | — |
+| 0.2 | 2.12 MB | 349.57 KB | 83.90% | — |
+| 0.4 | 2.12 MB | 517.10 KB | 76.18% | — |
 | 0.6 | 2.12 MB | 694.99 KB | 67.99% | Recommend |
 | 0.8 | 2.12 MB | 1.14 MB | 46.41% | Recommend |
 | 1 | 2.12 MB | 2.12 MB | 0% | Not recommend |
-| NaN | 2.12 MB | 2.01 MB | 5.02% | - |
+| NaN | 2.12 MB | 2.01 MB | 5.02% | — |
 
-### mimeType
+### `mimeType`
 
 * Type: `string`
 * Default: `'auto'`
 * Options: `"auto"`, `"image/png"`, `"image/jpeg"`, and `"image/webp"`.
 
-The mime type of the output image. By default, the original mime type of the source image file will be used.
+The [MIME type](https://webglossary.info/terms/mime-type/) of the output image. By default, the original MIME type of the source image file will be used.
 
-> **Note:** Safari does not support `mimeType` conversion to `"image/webp"`. For more details, see the [browser compatibility of the `HTMLCanvasElement.toBlob()` method](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob#browser_compatibility).
+**Note:** Safari does not support `mimeType` conversion to `"image/webp"`. For more details, see the [browser compatibility of the `HTMLCanvasElement.toBlob()` method](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob#browser_compatibility).
 
-### convertTypes
+### `convertTypes`
 
 * Type: `Array` or `string` (multiple types should be separated by commas)
 * Default: `["image/png"]`
@@ -237,24 +235,24 @@ The mime type of the output image. By default, the original mime type of the sou
 
 Files whose file type is included in this list, and whose file size exceeds the `convertSize` value will be converted to JPEGs.
 
-> For image file type support, see the [Image file type and format guide](https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types).
+For image file type support, see the [Image file type and format guide](https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types).
 
-### convertSize
+### `convertSize`
 
 * Type: `number`
 * Default: `5000000` (5 MB)
 
 Files whose file type is included in the `convertTypes` list, and whose file size exceeds this value will be converted to JPEGs. To disable this, just set the value to `Infinity`.
 
-**Examples**:
+**Examples:**
 
-| convertSize | Input size (type) | Output size (type) | Compression ratio |
+| `convertSize` | Input size (type) | Output size (type) | Compression ratio |
 | --- | --- | --- | --- |
 | 5 MB | 1.87 MB (PNG) | 1.87 MB (PNG) | 0% |
 | 5 MB | 5.66 MB (PNG) | 450.24 KB (JPEG) | 92.23% |
 | 5 MB | 9.74 MB (PNG) | 883.89 KB (JPEG) | 91.14% |
 
-### beforeDraw(context, canvas)
+### `beforeDraw(context, canvas)`
 
 * Type: `Function`
 * Default: `null`
@@ -274,7 +272,7 @@ new Compressor(file, {
 });
 ```
 
-### drew(context, canvas)
+### `drew(context, canvas)`
 
 * Type: `Function`
 * Default: `null`
@@ -294,7 +292,7 @@ new Compressor(file, {
 });
 ```
 
-### success(result)
+### `success(result)`
 
 * Type: `Function`
 * Default: `null`
@@ -303,7 +301,7 @@ new Compressor(file, {
 
 The hook function to execute when successful to compress the image.
 
-### error(err)
+### `error(err)`
 
 * Type: `Function`
 * Default: `null`
@@ -312,11 +310,9 @@ The hook function to execute when successful to compress the image.
 
 The hook function executes when fails to compress the image.
 
-[⬆ back to top](#table-of-contents)
-
 ## Methods
 
-### abort()
+### `abort()`
 
 Abort the compression process.
 
@@ -339,12 +335,6 @@ compressor.abort();
 
 Please read through our [contributing guidelines](.github/CONTRIBUTING.md).
 
-## Versioning
-
-Maintained under the [Semantic Versioning guidelines](https://semver.org/).
-
 ## License
 
 [MIT](https://opensource.org/licenses/MIT) © [Chen Fengyuan](https://chenfengyuan.com/), [Jens Oliver Meiert](https://meiert.com/)
-
-[⬆ back to top](#table-of-contents)
