@@ -57,7 +57,7 @@
   "homepage": "https://github.com/j9t/compressorjs-next",
   "devDependencies": {
     "@babel/core": "^7.28.6",
-    "@babel/preset-env": "^7.28.6",
+    "@babel/preset-env": "^7.29.0",
     "@commitlint/cli": "^20.3.1",
     "@commitlint/config-conventional": "^20.3.1",
     "@rollup/plugin-babel": "^6.1.0",
