@@ -1,20 +1,42 @@
 # Changelog
 
-## 2.0.0 (Jan 25, 2026)
+## 2.0.0 (Feb @@, 2026)
 
-* Adopt project as `compressorjs-next`
-* Update all dependencies
-* Drop Internet Explorer support
-* Remove `noConflict()` method
-* Remove `blueimp-canvas-to-blob` dependency (`canvas.toBlob()` now universally supported)
-* Remove `is-blob` dependency (use native `instanceof Blob`)
-* Remove unused devDependencies (`codecov`, `eslint-config-airbnb-base`, `eslint-plugin-import`, `change-case`, `create-banner`, `uglify-js`, `@rollup/plugin-replace`, `@babel/plugin-transform-object-assign`)
-* Replace `uglify-js` with `terser`
-* Migrate to ESLint flat config
-* Add `"type": "module"` for native ESM support
-  - Rename config files to `.cjs` for ESM compatibility
-* Fix deprecated `substr()` usage
-* Update TypeScript declarations
+### Breaking Changes
+
+* Adopted project as `compressorjs-next`
+* Dropped Internet Explorer support
+* Removed `noConflict()` method
+* Made ESM the default module format via `exports` field (CommonJS still supported)
+
+### Fixed
+
+* Fixed blob URL memory leak in error and abort paths
+* Fixed deprecated `substr()` usage
+
+### Changed
+
+* Added `"type": "module"` for native ESM support
+  - Renamed config files to `.cjs` for ESM compatibility
+* Added `"sideEffects": false` for better tree-shaking support
+* Added unit tests for utility functions
+* Added tests for blob URL cleanup verification
+* Updated TypeScript declarations
+
+### Performance
+
+* Refactored binary handling functions (`getExif`, `insertExif`, `arrayBufferToDataURL`) to use `DataView` instead of `Array.from()` for significantly better memory efficiency on large images
+* Updated `.browserslistrc` to target only modern browsers, reducing transpilation overhead
+
+### Internal
+
+* Updated all dependencies
+* Removed `blueimp-canvas-to-blob` dependency (`canvas.toBlob()` now universally supported)
+* Removed `is-blob` dependency (use native `instanceof Blob`)
+* Removed unused devDependencies (`codecov`, `eslint-config-airbnb-base`, `eslint-plugin-import`, `change-case`, `create-banner`, `uglify-js`, `@rollup/plugin-replace`, `@babel/plugin-transform-object-assign`)
+* Replaced `uglify-js` with `terser`
+* Migrated to ESLint flat config
+* Removed issue report templates and requirements
 
 ## 1.2.1 (Feb 28, 2023)
 
