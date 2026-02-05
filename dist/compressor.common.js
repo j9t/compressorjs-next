@@ -135,8 +135,7 @@ var DEFAULTS = {
   error: null
 };
 
-const IS_BROWSER = typeof window !== 'undefined' && typeof window.document !== 'undefined';
-const WINDOW = IS_BROWSER ? window : {};
+const WINDOW = typeof window !== 'undefined' && typeof window.document !== 'undefined' ? window : {};
 
 /**
  * Check if the given value is a positive number.
