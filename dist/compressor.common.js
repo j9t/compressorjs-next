@@ -846,7 +846,9 @@ class Compressor {
         this.reader.abort();
       } else if (!this.image.complete) {
         this.image.onload = null;
-        this.image.onabort();
+        this.image.onerror = null;
+        this.image.onabort = null;
+        this.fail(new Error('Aborted to load the image.'));
       } else {
         this.fail(new Error('The compression process has been aborted.'));
       }

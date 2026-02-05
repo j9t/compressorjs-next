@@ -11,7 +11,7 @@ const banner = `/*!
  * ${name}.js v${pkg.version}
  * https://github.com/j9t/compressorjs-next
  *
- * Copyright 2018-2024 Chen Fengyuan
+ * Copyright 2018–2024 Chen Fengyuan
  * Copyright 2026 Jens Oliver Meiert
  *
  * Released under the MIT license.
