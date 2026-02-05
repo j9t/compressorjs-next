@@ -2,7 +2,7 @@
  * Compressor.js v2.0.0
  * https://github.com/j9t/compressorjs-next
  *
- * Copyright 2018-2024 Chen Fengyuan
+ * Copyright 2018–2024 Chen Fengyuan
  * Copyright 2026 Jens Oliver Meiert
  *
  * Released under the MIT license.
