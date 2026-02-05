@@ -2,7 +2,7 @@
  * Compressor.js v2.0.0
  * https://github.com/j9t/compressorjs-next
  *
- * Copyright 2018–2024 Chen Fengyuan
+ * Copyright 2018-2024 Chen Fengyuan
  * Copyright 2026 Jens Oliver Meiert
  *
  * Released under the MIT license.
@@ -850,7 +850,9 @@
           this.reader.abort();
         } else if (!this.image.complete) {
           this.image.onload = null;
-          this.image.onabort();
+          this.image.onerror = null;
+          this.image.onabort = null;
+          this.fail(new Error('Aborted to load the image.'));
         } else {
           this.fail(new Error('The compression process has been aborted.'));
         }

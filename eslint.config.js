@@ -36,6 +36,9 @@ export default [
       sourceType: 'module',
       globals: {
         window: 'writable',
+        Image: 'readonly',
+        URL: 'readonly',
+        XMLHttpRequest: 'readonly',
       },
     },
     rules: {
@@ -43,7 +46,7 @@ export default [
     },
   },
   {
-    files: ['test/specs/**/*.js', 'test/helpers.js'],
+    files: ['test/specs/**/*.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

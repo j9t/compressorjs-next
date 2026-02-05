@@ -44,7 +44,7 @@ const { fromCharCode } = String;
  * @param {number} length - The read length.
  * @returns {string} The read result.
  */
-export function getStringFromCharCode(dataView, start, length) {
+function getStringFromCharCode(dataView, start, length) {
   let str = '';
   let i;
 

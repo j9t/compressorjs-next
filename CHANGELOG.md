@@ -34,8 +34,8 @@
 * Updated all dependencies
 * Removed `blueimp-canvas-to-blob` dependency (`canvas.toBlob()` now universally supported)
 * Removed `is-blob` dependency (use native `instanceof Blob`)
-* Removed unused devDependencies (`codecov`, `eslint-config-airbnb-base`, `eslint-plugin-import`, `change-case`, `create-banner`, `uglify-js`, `@rollup/plugin-replace`, `@babel/plugin-transform-object-assign`)
-* Removed Karma/Mocha/Chai testing stack (`karma`, `mocha`, `chai`, `puppeteer`, `cross-env`, `babel-plugin-istanbul`, and related plugins)
+* Removed unused dependencies
+* Removed Karma/Mocha/Chai testing stack
 * Replaced `uglify-js` with `terser`
 * Migrated to ESLint flat config
 * Removed issue report templates and requirements
