@@ -202,14 +202,21 @@
    * @returns {string} The result Data URL.
    */
   function arrayBufferToDataURL(arrayBuffer, mimeType) {
-    const chunks = [];
+    const uint8 = new Uint8Array(arrayBuffer);
+    const {
+      length
+    } = uint8;
     const chunkSize = 8192;
-    let uint8 = new Uint8Array(arrayBuffer);
-    while (uint8.length > 0) {
-      chunks.push(fromCharCode.apply(null, Array.from(uint8.subarray(0, chunkSize))));
-      uint8 = uint8.subarray(chunkSize);
+    let binary = '';
+    for (let i = 0; i < length; i += chunkSize) {
+      const end = Math.min(i + chunkSize, length);
+      let chunk = '';
+      for (let j = i; j < end; j += 1) {
+        chunk += fromCharCode(uint8[j]);
+      }
+      binary += chunk;
     }
-    return `data:${mimeType};base64,${btoa(chunks.join(''))}`;
+    return `data:${mimeType};base64,${btoa(binary)}`;
   }
 
   /**
@@ -385,15 +392,15 @@
    * @returns {Array} The read Exif information.
    */
   function getExif(arrayBuffer) {
-    const array = Array.from(new Uint8Array(arrayBuffer));
+    const dataView = new DataView(arrayBuffer);
     const {
-      length
-    } = array;
-    const segments = [];
+      byteLength
+    } = dataView;
+    const exifArray = [];
     let start = 0;
-    while (start + 3 < length) {
-      const value = array[start];
-      const next = array[start + 1];
+    while (start + 3 < byteLength) {
+      const value = dataView.getUint8(start);
+      const next = dataView.getUint8(start + 1);
 
       // SOS (Start of Scan)
       if (value === 0xFF && next === 0xDA) {
@@ -404,35 +411,54 @@
       if (value === 0xFF && next === 0xD8) {
         start += 2;
       } else {
-        const offset = array[start + 2] * 256 + array[start + 3];
-        const end = start + offset + 2;
-        const segment = array.slice(start, end);
-        segments.push(segment);
+        const segmentLength = dataView.getUint16(start + 2);
+        const end = start + segmentLength + 2;
+
+        // APP1 marker (EXIF)
+        if (value === 0xFF && next === 0xE1) {
+          for (let i = start; i < end && i < byteLength; i += 1) {
+            exifArray.push(dataView.getUint8(i));
+          }
+        }
         start = end;
       }
     }
-    return segments.reduce((exifArray, current) => {
-      if (current[0] === 0xFF && current[1] === 0xE1) {
-        return exifArray.concat(current);
-      }
-      return exifArray;
-    }, []);
+    return exifArray;
   }
 
   /**
    * Insert Exif information into the given array buffer.
    * @param {ArrayBuffer} arrayBuffer - The array buffer to transform.
    * @param {Array} exifArray - The Exif information to insert.
-   * @returns {ArrayBuffer} The transformed array buffer.
+   * @returns {Uint8Array} The transformed array as Uint8Array.
    */
   function insertExif(arrayBuffer, exifArray) {
-    const array = Array.from(new Uint8Array(arrayBuffer));
-    if (array[2] !== 0xFF || array[3] !== 0xE0) {
-      return arrayBuffer;
+    const dataView = new DataView(arrayBuffer);
+    const uint8 = new Uint8Array(arrayBuffer);
+
+    // Check for APP0 marker (JFIF)
+    if (dataView.getUint8(2) !== 0xFF || dataView.getUint8(3) !== 0xE0) {
+      return uint8;
     }
-    const app0Length = array[4] * 256 + array[5];
-    const newArrayBuffer = [0xFF, 0xD8].concat(exifArray, array.slice(4 + app0Length));
-    return new Uint8Array(newArrayBuffer);
+    const app0Length = dataView.getUint16(4);
+    const restStart = 4 + app0Length;
+    const restLength = uint8.byteLength - restStart;
+
+    // Create new buffer: SOI (2) + EXIF + rest of image
+    const result = new Uint8Array(2 + exifArray.length + restLength);
+
+    // SOI marker
+    result[0] = 0xFF;
+    result[1] = 0xD8;
+
+    // EXIF data
+    for (let i = 0; i < exifArray.length; i += 1) {
+      result[2 + i] = exifArray[i];
+    }
+
+    // Rest of image (skip SOI and APP0)
+    result.set(uint8.subarray(restStart), 2 + exifArray.length);
+    return result;
   }
 
   /**
@@ -474,6 +500,7 @@
       };
       this.aborted = false;
       this.result = null;
+      this.url = null;
       this.init();
     }
     init() {
@@ -502,8 +529,9 @@
       const checkOrientation = isJPEGImage && options.checkOrientation;
       const retainExif = isJPEGImage && options.retainExif;
       if (URL && !checkOrientation && !retainExif) {
+        this.url = URL.createObjectURL(file);
         this.load({
-          url: URL.createObjectURL(file)
+          url: this.url
         });
       } else {
         const reader = new FileReader();
@@ -534,7 +562,8 @@
             || orientation > 1) {
               data.url = arrayBufferToDataURL(result, mimeType);
             } else {
-              data.url = URL.createObjectURL(file);
+              this.url = URL.createObjectURL(file);
+              data.url = this.url;
             }
           } else {
             data.url = result;
@@ -770,12 +799,9 @@
     }) {
       const {
         file,
-        image,
         options
       } = this;
-      if (URL && image.src.indexOf('blob:') === 0) {
-        URL.revokeObjectURL(image.src);
-      }
+      this.revokeUrl();
       if (result) {
         // Returns original file if the result is greater than it and without size related options
         if (options.strict && !options.retainExif && result.size > file.size && options.mimeType === file.type && !(options.width > naturalWidth || options.height > naturalHeight || options.minWidth > naturalWidth || options.minHeight > naturalHeight || options.maxWidth < naturalWidth || options.maxHeight < naturalHeight)) {
@@ -804,10 +830,17 @@
       const {
         options
       } = this;
+      this.revokeUrl();
       if (options.error) {
         options.error.call(this, err);
       } else {
         throw err;
+      }
+    }
+    revokeUrl() {
+      if (URL && this.url) {
+        URL.revokeObjectURL(this.url);
+        this.url = null;
       }
     }
     abort() {
