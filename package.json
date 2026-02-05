@@ -39,15 +39,22 @@
     "url": "git+https://github.com/j9t/compressorjs-next.git"
   },
   "keywords": [
-    "image",
+    "blob",
+    "browser",
+    "canvas",
+    "client-side",
     "compress",
     "compressor",
-    "compressor.js",
-    "image-compressor",
-    "lossy-compression",
+    "image",
+    "image-compression",
+    "image-processing",
+    "image-upload",
     "javascript",
-    "front-end",
-    "web"
+    "jpeg",
+    "jpg",
+    "lossy-compression",
+    "png",
+    "webp"
   ],
   "author": {
     "name": "Jens Oliver Meiert",
