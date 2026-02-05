@@ -17,8 +17,9 @@
 ### Changed
 
 * Added `"type": "module"` for native ESM support
-  - Renamed config files to `.cjs` for ESM compatibility
 * Added `"sideEffects": false` for better tree-shaking support
+* Migrated from Karma/Mocha/Chai to Vitest with browser mode for cleaner ESM-native testing
+* Converted all test files to `async`/`await` pattern
 * Added unit tests for utility functions
 * Added tests for blob URL cleanup verification
 * Updated TypeScript declarations
@@ -34,6 +35,7 @@
 * Removed `blueimp-canvas-to-blob` dependency (`canvas.toBlob()` now universally supported)
 * Removed `is-blob` dependency (use native `instanceof Blob`)
 * Removed unused devDependencies (`codecov`, `eslint-config-airbnb-base`, `eslint-plugin-import`, `change-case`, `create-banner`, `uglify-js`, `@rollup/plugin-replace`, `@babel/plugin-transform-object-assign`)
+* Removed Karma/Mocha/Chai testing stack (`karma`, `mocha`, `chai`, `puppeteer`, `cross-env`, `babel-plugin-istanbul`, and related plugins)
 * Replaced `uglify-js` with `terser`
 * Migrated to ESLint flat config
 * Removed issue report templates and requirements

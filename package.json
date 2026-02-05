@@ -19,17 +19,20 @@
     "types"
   ],
   "scripts": {
-    "build": "rollup -c rollup.config.cjs",
+    "postinstall": "playwright install chromium",
+    "build": "rollup -c",
     "clean": "del-cli dist",
     "compress": "terser dist/compressor.js -o dist/compressor.min.js -c -m --comments /^!/",
-    "dev": "rollup -c rollup.config.cjs -m -w",
+    "dev": "rollup -c -m -w",
     "lint": "npm run lint:js && npm run lint:css",
     "lint:css": "stylelint docs/**/*.css --fix",
     "lint:js": "eslint src test",
     "prepare": "husky",
     "release": "npm run clean && npm run lint && npm run build && npm run compress && npm test",
     "start": "npm run dev",
-    "test": "cross-env NODE_ENV=test karma start test/karma.conf.cjs"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "repository": {
     "type": "git",
@@ -69,26 +72,18 @@
     "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
-    "babel-plugin-istanbul": "^7.0.1",
-    "chai": "^6.2.2",
-    "cross-env": "^10.1.0",
+    "@vitest/browser": "^3.1.0",
+    "@vitest/coverage-istanbul": "^3.1.0",
     "del-cli": "^7.0.0",
     "eslint": "^9.39.2",
     "husky": "^9.1.7",
-    "karma": "^6.4.4",
-    "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^3.2.0",
-    "karma-coverage-istanbul-reporter": "^3.0.3",
-    "karma-mocha": "^2.0.1",
-    "karma-mocha-reporter": "^2.2.5",
-    "karma-rollup-preprocessor": "^7.0.8",
     "lint-staged": "^16.2.7",
-    "mocha": "^11.7.5",
-    "puppeteer": "^24.36.1",
+    "playwright": "^1.50.0",
     "rollup": "^4.57.1",
     "stylelint": "^17.0.0",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-order": "^7.0.1",
-    "terser": "^5.37.0"
+    "terser": "^5.37.0",
+    "vitest": "^3.1.0"
   }
 }
