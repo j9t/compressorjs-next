@@ -59,13 +59,18 @@ export function compress(image, options = {}) {
  * @returns {Promise<{width: number, height: number}>}
  */
 export function getImageDimensions(blob) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const img = new Image();
+    const url = URL.createObjectURL(blob);
 
     img.onload = () => {
-      URL.revokeObjectURL(img.src);
+      URL.revokeObjectURL(url);
       resolve({ width: img.naturalWidth, height: img.naturalHeight });
     };
-    img.src = URL.createObjectURL(blob);
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Failed to load image'));
+    };
+    img.src = url;
   });
 }

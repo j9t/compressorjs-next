@@ -1,2 +1,3 @@
-const IS_BROWSER = typeof window !== 'undefined' && typeof window.document !== 'undefined';
-export const WINDOW = IS_BROWSER ? window : {};
+export const WINDOW = (typeof window !== 'undefined' && typeof window.document !== 'undefined')
+  ? window
+  : {};

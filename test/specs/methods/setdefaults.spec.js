@@ -18,8 +18,6 @@ describe('setDefaults', () => {
         quality: 1,
         success(result) {
           expect(result).not.toBe(image);
-
-          // Reverts it for the rest test suites
           Compressor.setDefaults({
             strict: true,
           });
