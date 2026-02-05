@@ -3,10 +3,16 @@
   "version": "2.0.0",
   "type": "module",
   "description": "JavaScript image compressor.",
-  "main": "dist/compressor.common.js",
-  "module": "dist/compressor.esm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/compressor.esm.js",
+      "require": "./dist/compressor.common.js"
+    }
+  },
+  "main": "dist/compressor.esm.js",
   "browser": "dist/compressor.js",
   "types": "types/index.d.ts",
+  "sideEffects": false,
   "files": [
     "src",
     "dist",
