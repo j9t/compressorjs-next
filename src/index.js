@@ -40,6 +40,7 @@ export default class Compressor {
     };
     this.aborted = false;
     this.result = null;
+    this.url = null;
     this.init();
   }
 
@@ -73,8 +74,9 @@ export default class Compressor {
     const retainExif = isJPEGImage && options.retainExif;
 
     if (URL && !checkOrientation && !retainExif) {
+      this.url = URL.createObjectURL(file);
       this.load({
-        url: URL.createObjectURL(file),
+        url: this.url,
       });
     } else {
       const reader = new FileReader();
@@ -108,7 +110,8 @@ export default class Compressor {
           ) {
             data.url = arrayBufferToDataURL(result, mimeType);
           } else {
-            data.url = URL.createObjectURL(file);
+            this.url = URL.createObjectURL(file);
+            data.url = this.url;
           }
         } else {
           data.url = result;
@@ -348,11 +351,9 @@ export default class Compressor {
     naturalHeight,
     result,
   }) {
-    const { file, image, options } = this;
+    const { file, options } = this;
 
-    if (URL && image.src.indexOf('blob:') === 0) {
-      URL.revokeObjectURL(image.src);
-    }
+    this.revokeUrl();
 
     if (result) {
       // Returns original file if the result is greater than it and without size related options
@@ -401,10 +402,19 @@ export default class Compressor {
   fail(err) {
     const { options } = this;
 
+    this.revokeUrl();
+
     if (options.error) {
       options.error.call(this, err);
     } else {
       throw err;
+    }
+  }
+
+  revokeUrl() {
+    if (URL && this.url) {
+      URL.revokeObjectURL(this.url);
+      this.url = null;
     }
   }
 
@@ -416,7 +426,9 @@ export default class Compressor {
         this.reader.abort();
       } else if (!this.image.complete) {
         this.image.onload = null;
-        this.image.onabort();
+        this.image.onerror = null;
+        this.image.onabort = null;
+        this.fail(new Error('Aborted to load the image.'));
       } else {
         this.fail(new Error('The compression process has been aborted.'));
       }
