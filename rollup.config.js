@@ -1,11 +1,12 @@
-const { babel } = require('@rollup/plugin-babel');
-const commonjs = require('@rollup/plugin-commonjs');
-const { nodeResolve } = require('@rollup/plugin-node-resolve');
-const pkg = require('./package.json');
+import { babel } from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { readFileSync } from 'node:fs';
+
+const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
 
 const name = 'Compressor';
 const fileName = 'compressor';
-const year = new Date().getFullYear();
 const banner = `/*!
  * ${name}.js v${pkg.version}
  * https://github.com/j9t/compressorjs-next
@@ -16,7 +17,7 @@ const banner = `/*!
  * Released under the MIT license.
  */`;
 
-module.exports = {
+export default {
   input: 'src/index.js',
   output: [
     {

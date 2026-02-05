@@ -44,7 +44,7 @@ const { fromCharCode } = String;
  * @param {number} length - The read length.
  * @returns {string} The read result.
  */
-export function getStringFromCharCode(dataView, start, length) {
+function getStringFromCharCode(dataView, start, length) {
   let str = '';
   let i;
 
@@ -66,16 +66,23 @@ const { btoa } = WINDOW;
  * @returns {string} The result Data URL.
  */
 export function arrayBufferToDataURL(arrayBuffer, mimeType) {
-  const chunks = [];
+  const uint8 = new Uint8Array(arrayBuffer);
+  const { length } = uint8;
   const chunkSize = 8192;
-  let uint8 = new Uint8Array(arrayBuffer);
+  let binary = '';
 
-  while (uint8.length > 0) {
-    chunks.push(fromCharCode.apply(null, Array.from(uint8.subarray(0, chunkSize))));
-    uint8 = uint8.subarray(chunkSize);
+  for (let i = 0; i < length; i += chunkSize) {
+    const end = Math.min(i + chunkSize, length);
+    let chunk = '';
+
+    for (let j = i; j < end; j += 1) {
+      chunk += fromCharCode(uint8[j]);
+    }
+
+    binary += chunk;
   }
 
-  return `data:${mimeType};base64,${btoa(chunks.join(''))}`;
+  return `data:${mimeType};base64,${btoa(binary)}`;
 }
 
 /**
@@ -273,14 +280,14 @@ export function getAdjustedSizes(
  * @returns {Array} The read Exif information.
  */
 export function getExif(arrayBuffer) {
-  const array = Array.from(new Uint8Array(arrayBuffer));
-  const { length } = array;
-  const segments = [];
+  const dataView = new DataView(arrayBuffer);
+  const { byteLength } = dataView;
+  const exifArray = [];
   let start = 0;
 
-  while (start + 3 < length) {
-    const value = array[start];
-    const next = array[start + 1];
+  while (start + 3 < byteLength) {
+    const value = dataView.getUint8(start);
+    const next = dataView.getUint8(start + 1);
 
     // SOS (Start of Scan)
     if (value === 0xFF && next === 0xDA) {
@@ -291,41 +298,58 @@ export function getExif(arrayBuffer) {
     if (value === 0xFF && next === 0xD8) {
       start += 2;
     } else {
-      const offset = array[start + 2] * 256 + array[start + 3];
-      const end = start + offset + 2;
-      const segment = array.slice(start, end);
+      const segmentLength = dataView.getUint16(start + 2);
+      const end = start + segmentLength + 2;
 
-      segments.push(segment);
+      // APP1 marker (EXIF)
+      if (value === 0xFF && next === 0xE1) {
+        for (let i = start; i < end && i < byteLength; i += 1) {
+          exifArray.push(dataView.getUint8(i));
+        }
+      }
+
       start = end;
     }
   }
 
-  return segments.reduce((exifArray, current) => {
-    if (current[0] === 0xFF && current[1] === 0xE1) {
-      return exifArray.concat(current);
-    }
-
-    return exifArray;
-  }, []);
+  return exifArray;
 }
 
 /**
  * Insert Exif information into the given array buffer.
  * @param {ArrayBuffer} arrayBuffer - The array buffer to transform.
  * @param {Array} exifArray - The Exif information to insert.
- * @returns {ArrayBuffer} The transformed array buffer.
+ * @returns {Uint8Array} The transformed array as Uint8Array.
  */
 export function insertExif(arrayBuffer, exifArray) {
-  const array = Array.from(new Uint8Array(arrayBuffer));
+  const dataView = new DataView(arrayBuffer);
+  const uint8 = new Uint8Array(arrayBuffer);
 
-  if (array[2] !== 0xFF || array[3] !== 0xE0) {
-    return arrayBuffer;
+  // Check for APP0 marker (JFIF)
+  if (dataView.getUint8(2) !== 0xFF || dataView.getUint8(3) !== 0xE0) {
+    return uint8;
   }
 
-  const app0Length = array[4] * 256 + array[5];
-  const newArrayBuffer = [0xFF, 0xD8].concat(exifArray, array.slice(4 + app0Length));
+  const app0Length = dataView.getUint16(4);
+  const restStart = 4 + app0Length;
+  const restLength = uint8.byteLength - restStart;
 
-  return new Uint8Array(newArrayBuffer);
+  // Create new buffer: SOI (2) + EXIF + rest of image
+  const result = new Uint8Array(2 + exifArray.length + restLength);
+
+  // SOI marker
+  result[0] = 0xFF;
+  result[1] = 0xD8;
+
+  // EXIF data
+  for (let i = 0; i < exifArray.length; i += 1) {
+    result[2 + i] = exifArray[i];
+  }
+
+  // Rest of image (skip SOI and APP0)
+  result.set(uint8.subarray(restStart), 2 + exifArray.length);
+
+  return result;
 }
 
 /**

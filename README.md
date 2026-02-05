@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/compressorjs-next.svg)](https://www.npmjs.com/package/compressorjs-next)
 
-Modernized and maintained fork of [Fengyuan Chen’s Compressor.js](https://github.com/fengyuanchen/compressorjs).
+Modernized, optimized, and maintained fork of [Fengyuan Chen’s Compressor.js](https://github.com/fengyuanchen/compressorjs).
 
 A JavaScript image compressor. Uses the browser’s native [HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) method to do the compression work, which means it is **lossy compression**, **asynchronous**, and has **different compression effects in different browsers**. Generally use this to precompress an image on the client side before uploading it.
 
@@ -23,8 +23,8 @@ A JavaScript image compressor. Uses the browser’s native [HTMLCanvasElement.to
 dist/
 ├── compressor.js        (UMD)
 ├── compressor.min.js    (UMD, compressed)
-├── compressor.common.js (CommonJS, default)
-└── compressor.esm.js    (ES Module)
+├── compressor.esm.js    (ES Module, default)
+└── compressor.common.js (CommonJS)
 ```
 
 ## Getting started
@@ -186,7 +186,7 @@ The height of the output image. If not specified, the natural height of the orig
 
 * Type: `string`
 * Default: `"none"`
-* Options: `"none"`, `"contain"`, and `"cover"`.
+* Options: `"none"`, `"contain"`, and `"cover"`
 
 Sets how the size of the image should be resized to the container specified by the `width` and `height` options.
 
@@ -219,7 +219,7 @@ The quality of the output image. It must be a number between `0` and `1`. If thi
 
 * Type: `string`
 * Default: `'auto'`
-* Options: `"auto"`, `"image/png"`, `"image/jpeg"`, and `"image/webp"`.
+* Options: `"auto"`, `"image/png"`, `"image/jpeg"`, and `"image/webp"`
 
 The [MIME type](https://webglossary.info/terms/mime-type/) of the output image. By default, the original MIME type of the source image file will be used.
 
@@ -325,15 +325,7 @@ compressor.abort();
 
 ## Browser support
 
-* Chrome (latest)
-* Firefox (latest)
-* Safari (latest)
-* Opera (latest)
-* Edge (latest)
-
-## Contributing
-
-Please read through our [contributing guidelines](.github/CONTRIBUTING.md).
+Supports [browserslist `defaults`](https://browsersl.ist/#q=defaults).
 
 ## License
 
