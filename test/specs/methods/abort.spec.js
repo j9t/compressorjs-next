@@ -104,4 +104,54 @@ describe('abort', () => {
       }, 500);
     });
   });
+
+  it('should revoke blob URL when aborted before load', (done) => {
+    window.loadImageAsBlob('/base/docs/images/picture.jpg', (image) => {
+      const compressor = new Compressor(image, {
+        checkOrientation: false,
+        error() {
+          // After abort, the url should be revoked (set to null)
+          expect(compressor.url).to.be.null;
+          done();
+        },
+      });
+
+      // Abort immediately - url should exist at this point
+      expect(compressor.url).to.be.a('string');
+      expect(compressor.url.startsWith('blob:')).to.be.true;
+      compressor.abort();
+    });
+  });
+
+  it('should revoke blob URL when aborted during draw', (done) => {
+    window.loadImageAsBlob('/base/docs/images/picture.jpg', (image) => {
+      let urlBeforeAbort;
+
+      new Compressor(image, {
+        checkOrientation: false,
+        beforeDraw() {
+          urlBeforeAbort = this.url;
+          this.abort();
+        },
+        error() {
+          expect(urlBeforeAbort).to.be.a('string');
+          expect(this.url).to.be.null;
+          done();
+        },
+      });
+    });
+  });
+
+  it('should revoke blob URL on successful completion', (done) => {
+    window.loadImageAsBlob('/base/docs/images/picture.jpg', (image) => {
+      new Compressor(image, {
+        checkOrientation: false,
+        success() {
+          // URL should be revoked after successful completion
+          expect(this.url).to.be.null;
+          done();
+        },
+      });
+    });
+  });
 });
