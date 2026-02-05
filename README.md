@@ -325,11 +325,7 @@ compressor.abort();
 
 ## Browser support
 
-* Chrome (latest)
-* Firefox (latest)
-* Safari (latest)
-* Opera (latest)
-* Edge (latest)
+Supports [browserslist `defaults`](https://browsersl.ist/#q=defaults).
 
 ## License
 
