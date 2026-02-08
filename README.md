@@ -1,4 +1,4 @@
-# Compressor.js Next
+# Compressor.js Next (Beta)
 
 [![npm version](https://img.shields.io/npm/v/compressorjs-next.svg)](https://www.npmjs.com/package/compressorjs-next)
 
