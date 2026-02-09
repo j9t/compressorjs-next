@@ -1,64 +1,11 @@
 {
-  "name": "compressorjs-next",
-  "version": "2.0.0",
-  "type": "module",
-  "description": "JavaScript image compressor.",
-  "exports": {
-    ".": {
-      "import": "./dist/compressor.esm.js",
-      "require": "./dist/compressor.common.js"
-    }
-  },
-  "main": "dist/compressor.esm.js",
-  "browser": "dist/compressor.js",
-  "types": "types/index.d.ts",
-  "sideEffects": false,
-  "files": [
-    "src",
-    "dist",
-    "types"
-  ],
-  "scripts": {
-    "build": "rollup -c",
-    "clean": "del-cli dist",
-    "compress": "terser dist/compressor.js -o dist/compressor.min.js -c -m --comments /^!/",
-    "dev": "rollup -c -m -w",
-    "lint": "npm run lint:js && npm run lint:css",
-    "lint:css": "stylelint docs/**/*.css --fix",
-    "lint:js": "eslint src test",
-    "prepare": "husky",
-    "release": "npm run clean && npm run lint && npm run build && npm run compress && npm test",
-    "start": "npm run dev",
-    "pretest": "playwright install chromium",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/j9t/compressorjs-next.git"
-  },
-  "keywords": [
-    "blob",
-    "browser",
-    "canvas",
-    "client-side",
-    "compress",
-    "compressor",
-    "image",
-    "image-compression",
-    "image-processing",
-    "image-upload",
-    "javascript",
-    "jpeg",
-    "jpg",
-    "lossy-compression",
-    "png",
-    "webp"
-  ],
   "author": {
     "name": "Jens Oliver Meiert",
     "url": "https://meiert.com/"
+  },
+  "browser": "dist/compressor.js",
+  "bugs": {
+    "url": "https://github.com/j9t/compressorjs-next/issues"
   },
   "contributors": [
     {
@@ -66,11 +13,7 @@
       "url": "https://chenfengyuan.com/"
     }
   ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/j9t/compressorjs-next/issues"
-  },
-  "homepage": "https://github.com/j9t/compressorjs-next",
+  "description": "JavaScript image compressor.",
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@babel/preset-env": "^7.29.0",
@@ -90,5 +33,62 @@
     "stylelint-order": "^7.0.1",
     "terser": "^5.46.0",
     "vitest": "^4.0.18"
-  }
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/compressor.esm.js",
+      "require": "./dist/compressor.common.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "types"
+  ],
+  "homepage": "https://github.com/j9t/compressorjs-next",
+  "keywords": [
+    "blob",
+    "browser",
+    "canvas",
+    "client-side",
+    "compress",
+    "compressor",
+    "image",
+    "image-compression",
+    "image-processing",
+    "image-upload",
+    "javascript",
+    "jpeg",
+    "jpg",
+    "lossy-compression",
+    "png",
+    "webp"
+  ],
+  "license": "MIT",
+  "main": "dist/compressor.esm.js",
+  "name": "compressorjs-next",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/j9t/compressorjs-next.git"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "clean": "del-cli dist",
+    "compress": "terser dist/compressor.js -o dist/compressor.min.js -c -m --comments /^!/",
+    "dev": "rollup -c -m -w",
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:css": "stylelint docs/**/*.css --fix",
+    "lint:js": "eslint src test",
+    "prepare": "husky",
+    "pretest": "playwright install chromium",
+    "release": "npm run clean && npm run lint && npm run build && npm run compress && npm test",
+    "start": "npm run dev",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "types": "types/index.d.ts",
+  "version": "2.0.0"
 }
