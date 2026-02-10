@@ -1,20 +1,20 @@
 export default {
   /**
    * Indicates if output the original image instead of the compressed one
-   * when the size of the compressed image is greater than the original one's
+   * when the size of the compressed image is greater than the original one’s
    * @type {boolean}
    */
   strict: true,
 
   /**
-   * Indicates if read the image's Exif Orientation information,
+   * Indicates if read the image’s Exif Orientation information,
    * and then rotate or flip the image automatically.
    * @type {boolean}
    */
   checkOrientation: true,
 
   /**
-   * Indicates if retain the image's Exif information after compressed.
+   * Indicates if retain the image’s Exif information after compressed.
    * @type {boolean}
   */
   retainExif: false,
