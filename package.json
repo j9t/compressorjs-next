@@ -75,7 +75,7 @@
     "build": "rollup -c",
     "clean": "del-cli dist",
     "compress": "terser dist/compressor.js -o dist/compressor.min.js -c -m --comments /^!/",
-    "dev": "rollup -c -m -w",
+    "dev": "rollup -c -m -w & npx serve docs",
     "lint": "npm run lint:js && npm run lint:css",
     "lint:css": "stylelint docs/**/*.css --fix",
     "lint:js": "eslint src test",
@@ -90,5 +90,5 @@
   "sideEffects": false,
   "type": "module",
   "types": "types/index.d.ts",
-  "version": "1.0.0"
+  "version": "1.0.1"
 }

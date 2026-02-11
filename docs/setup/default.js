@@ -119,10 +119,10 @@ window.addEventListener('DOMContentLoaded', function () {
 
         blob.lastModified = date.getTime();
         blob.lastModifiedDate = date;
-        blob.name = 'picture.jpg';
+        blob.name = 'demo.jpg';
         vm.compress(blob);
       };
-      xhr.open('GET', 'images/picture.jpg');
+      xhr.open('GET', 'media/demo.jpg');
       xhr.responseType = 'blob';
       xhr.send();
     },

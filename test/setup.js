@@ -6,8 +6,8 @@ import * as utilities from '../src/utilities.js';
 export { Compressor, utilities };
 
 // Image path for tests (served from project root in Vitest browser mode)
-export const TEST_IMAGE = '/docs/images/picture.jpg';
-export const TEST_IMAGE_PNG = '/docs/images/picture.png';
+export const TEST_IMAGE = '/docs/media/test.jpg';
+export const TEST_IMAGE_PNG = '/docs/media/test.png';
 
 /**
  * Load an image as a Blob for testing
