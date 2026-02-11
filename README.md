@@ -8,6 +8,7 @@ A JavaScript image compressor. Uses the browser’s native [HTMLCanvasElement.to
 
 ## Table of contents
 
+* [Migrating from Compressor.js](#migrating-from-compressorjs)
 * [Main files](#main-files)
 * [Getting started](#getting-started)
 * [Options](#options)
@@ -16,6 +17,12 @@ A JavaScript image compressor. Uses the browser’s native [HTMLCanvasElement.to
 * [Contributing](#contributing)
 * [Versioning](#versioning)
 * [License](#license)
+
+## Migrating from Compressor.js
+
+Change the package name from `compressorjs` to `compressorjs-next` in your `package.json` and imports (`import Compressor from 'compressorjs-next'`).
+
+The API is otherwise the same, with these exceptions: ESM is now the default module format (CommonJS is still supported), the `noConflict()` method has been removed, and Internet Explorer is no longer supported.
 
 ## Main files
 
