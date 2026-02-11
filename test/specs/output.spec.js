@@ -12,7 +12,7 @@ describe('output options', () => {
 
     it('should match the given mime type', async () => {
       const image = await loadImageAsBlob(TEST_IMAGE);
-      image.name = 'picture.jpg';
+      image.name = 'test.jpg';
 
       const mimeType = 'image/webp';
 

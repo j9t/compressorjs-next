@@ -40,7 +40,7 @@ export default {
     {
       banner,
       name,
-      file: `docs/js/${fileName}.js`,
+      file: `docs/setup/${fileName}.js`,
       format: 'umd',
     },
   ],

@@ -1,14 +1,7 @@
 window.addEventListener('DOMContentLoaded', function () {
-  var Vue = window.Vue;
-  var URL = window.URL || window.webkitURL;
-  var XMLHttpRequest = window.XMLHttpRequest;
   var Compressor = window.Compressor;
 
-  Vue.component('VueCompareImage', window.vueCompareImage);
-
-  new Vue({
-    el: '#app',
-
+  var app = Vue.createApp({
     data: function () {
       var vm = this;
 
@@ -31,10 +24,7 @@ window.addEventListener('DOMContentLoaded', function () {
           success: function (result) {
             console.log('Output: ', result);
 
-            if (URL) {
-              vm.outputURL = URL.createObjectURL(result);
-            }
-
+            vm.outputURL = URL.createObjectURL(result);
             vm.output = result;
             vm.$refs.input.value = '';
           },
@@ -49,7 +39,7 @@ window.addEventListener('DOMContentLoaded', function () {
       };
     },
 
-    filters: {
+    methods: {
       prettySize: function (size) {
         var kilobyte = 1024;
         var megabyte = kilobyte * kilobyte;
@@ -64,20 +54,14 @@ window.addEventListener('DOMContentLoaded', function () {
 
         return 'N/A';
       },
-    },
 
-    methods: {
       compress: function (file) {
         if (!file) {
           return;
         }
 
         console.log('Input: ', file);
-
-        if (URL) {
-          this.inputURL = URL.createObjectURL(file);
-        }
-
+        this.inputURL = URL.createObjectURL(file);
         this.input = file;
         new Compressor(file, this.options);
       },
@@ -106,10 +90,6 @@ window.addEventListener('DOMContentLoaded', function () {
     },
 
     mounted: function () {
-      if (!XMLHttpRequest) {
-        return;
-      }
-
       var vm = this;
       var xhr = new XMLHttpRequest();
 
@@ -119,12 +99,18 @@ window.addEventListener('DOMContentLoaded', function () {
 
         blob.lastModified = date.getTime();
         blob.lastModifiedDate = date;
-        blob.name = 'picture.jpg';
+        blob.name = 'demo.jpg';
         vm.compress(blob);
       };
-      xhr.open('GET', 'images/picture.jpg');
+      xhr.open('GET', 'media/demo.jpg');
       xhr.responseType = 'blob';
       xhr.send();
     },
   });
+
+  app.config.compilerOptions.isCustomElement = function (tag) {
+    return tag === 'img-comparison-slider';
+  };
+
+  app.mount('#app');
 });

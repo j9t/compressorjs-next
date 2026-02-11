@@ -2,19 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="JavaScript image compressor.">
     <meta name="author" content="Jens Oliver Meiert">
     <title>Compressor.js Next</title>
-    <link rel="stylesheet" href="https://unpkg.com/bootstrap@4/dist/css/bootstrap.min.css" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.8/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="setup/default.css">
   </head>
   <body>
-    <header class="navbar navbar-light navbar-expand-md">
+    <header class="navbar navbar-expand-md">
       <div class="container">
         <a class="navbar-brand" href="./">Compressor.js Next</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbar-collapse" role="navigation">
@@ -22,46 +21,35 @@
             <li class="nav-item">
               <a class="nav-link" href="https://github.com/j9t/compressorjs-next/blob/main/README.md">Docs</a>
             </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Examples
-              </a>
-              <div class="dropdown-menu">
-                <a class="dropdown-item" href="examples/grayscale.html">Grayscale</a>
-                <a class="dropdown-item" href="examples/watermark.html">Watermark</a>
-                <a class="dropdown-item" href="examples/work-with-promise.html">Work with promise</a>
-              </div>
-            </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item">
               <a class="nav-link" href="https://github.com/j9t/compressorjs-next" title="View the GitHub project">GitHub</a>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item">
               <a class="nav-link" href="https://www.npmjs.com/~j9t" title="Explore more projects">Explore</a>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item">
               <a class="nav-link" href="https://meiert.com/" title="About the author">About</a>
             </li>
           </ul>
         </div>
       </div>
     </header>
-    <div class="jumbotron bg-primary text-white rounded-0">
+    <div class="bg-primary text-white py-5 mb-4">
       <div class="container">
         <div class="row">
           <div class="col-md">
             <h1>Compressor.js Next</h1>
-            <p class="lead">JavaScript image compressor.</p>
+            <p class="lead">JavaScript image compressor</p>
           </div>
         </div>
       </div>
     </div>
     <div class="container">
       <h2>Playground</h2>
-      <hr>
       <div id="app" v-cloak>
         <div class="card bg-light mb-4" @change="change" @dragover="dragover" @drop="drop">
           <div class="card-body">
-            <div class="p-5 text-center">Drop image here or <label class="text-primary">browse… <input type="file" class="sr-only" id="file" accept="image/*" ref="input"></label></div>
+            <div class="p-5 text-center">Drop image here or <label class="text-primary">browse… <input type="file" class="visually-hidden" id="file" accept="image/*" ref="input"></label></div>
           </div>
         </div>
         <div class="row">
@@ -69,74 +57,74 @@
             <div class="card h-100">
               <h4 class="card-header">Options</h4>
               <div class="card-body">
-                <fieldset class="form-group">
+                <fieldset class="mb-3">
                   <div class="form-check form-check-inline">
                     <input type="checkbox" name="strict" class="form-check-input" id="inputStrict" v-model="options.strict">
                     <label class="form-check-label" for="inputStrict">strict</label>
                   </div>
                 </fieldset>
-                <fieldset class="form-group">
+                <fieldset class="mb-3">
                   <div class="form-check form-check-inline">
                     <input type="checkbox" name="checkOrientation" class="form-check-input" id="inputCheckOrientation" v-model="options.checkOrientation">
                     <label class="form-check-label" for="inputCheckOrientation">checkOrientation</label>
                   </div>
                 </fieldset>
-                <fieldset class="form-group">
+                <fieldset class="mb-3">
                   <div class="form-check form-check-inline">
                     <input type="checkbox" name="retainExif" class="form-check-input" id="inputRetainExif" v-model="options.retainExif">
                     <label class="form-check-label" for="inputRetainExif">retainExif</label>
                   </div>
                 </fieldset>
-                <div class="form-group row">
+                <div class="row mb-3">
                   <label for="inputMaxWidth" class="col-5 col-form-label">maxWidth</label>
                   <div class="col-7">
                     <input type="number" name="maxWidth" class="form-control" id="inputMaxWidth" placeholder="Infinity" v-model.number="options.maxWidth">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="row mb-3">
                   <label for="inputMaxHeight" class="col-5 col-form-label">maxHeight</label>
                   <div class="col-7">
                     <input type="number" name="maxHeight" class="form-control" id="inputMaxHeight" placeholder="Infinity" v-model.number="options.maxHeight">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="row mb-3">
                   <label for="inputMinWidth" class="col-5 col-form-label">minWidth</label>
                   <div class="col-7">
                     <input type="number" name="minWidth" class="form-control" id="inputMinWidth" placeholder="0" v-model.number="options.minWidth">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="row mb-3">
                   <label for="inputMinHeight" class="col-5 col-form-label">minHeight</label>
                   <div class="col-7">
                     <input type="number" name="minHeight" class="form-control" id="inputMinHeight" placeholder="0" v-model.number="options.minHeight">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="row mb-3">
                   <label for="inputWidth" class="col-5 col-form-label">width</label>
                   <div class="col-7">
                     <input type="number" name="width" class="form-control" id="inputWidth" placeholder="undefined" v-model.number="options.width">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="row mb-3">
                   <label for="inputHeight" class="col-5 col-form-label">height</label>
                   <div class="col-7">
                     <input type="number" name="height" class="form-control" id="inputHeight" placeholder="undefined" v-model.number="options.height">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="row mb-3">
                   <label for="inputResize" class="col-5 col-form-label">resize</label>
                   <div class="col-7">
-                    <select class="form-control" name="resize" id="inputResize" v-model.number="options.resize">
+                    <select class="form-select" name="resize" id="inputResize" v-model="options.resize">
                       <option value="none">none</option>
                       <option value="contain">contain</option>
                       <option value="cover">cover</option>
                     </select>
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="row mb-3">
                   <label for="inputQuality" class="col-5 col-form-label">quality</label>
                   <div class="col-7">
-                    <select class="form-control" name="quality" id="inputQuality" v-model.number="options.quality">
+                    <select class="form-select" name="quality" id="inputQuality" v-model.number="options.quality">
                       <option value="0">0</option>
                       <option value="0.1">0.1</option>
                       <option value="0.2">0.2</option>
@@ -152,10 +140,10 @@
                     </select>
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="row mb-3">
                   <label for="inputMimeType" class="col-5 col-form-label">mimeType</label>
                   <div class="col-7">
-                    <select class="form-control" name="mimeType" id="inputMimeType" v-model="options.mimeType">
+                    <select class="form-select" name="mimeType" id="inputMimeType" v-model="options.mimeType">
                       <option value="auto">auto</option>
                       <option value="image/jpeg">image/jpeg</option>
                       <option value="image/png">image/png</option>
@@ -163,13 +151,13 @@
                     </select>
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="row mb-3">
                   <label for="inputConvertTypes" class="col-5 col-form-label">convertTypes</label>
                   <div class="col-7">
                     <input type="text" name="convertTypes" class="form-control" id="inputConvertTypes" placeholder="image/png" v-model="options.convertTypes">
                   </div>
                 </div>
-                <div class="form-group row mb-0">
+                <div class="row mb-0">
                   <label for="inputConvertSize" class="col-5 col-form-label">convertSize</label>
                   <div class="col-7">
                     <input type="number" name="convertSize" class="form-control" id="inputConvertSize" placeholder="5000000" v-model.number="options.convertSize">
@@ -203,7 +191,7 @@
                       <dt class="col-5">type:</dt>
                       <dd class="col-7">{{ input.type || 'N/A' }}</dd>
                       <dt class="col-5">size:</dt>
-                      <dd class="col-7">{{ input.size | prettySize }}</dd>
+                      <dd class="col-7">{{ prettySize(input.size) }}</dd>
                     </dl>
                   </div>
                 </div>
@@ -233,7 +221,7 @@
                       <dt class="col-5">type:</dt>
                       <dd class="col-7">{{ output.type || 'N/A' }}</dd>
                       <dt class="col-5">size:</dt>
-                      <dd class="col-7">{{ output.size | prettySize }}
+                      <dd class="col-7">{{ prettySize(output.size) }}
                         <span v-if="output.size">({{ ((1 - (output.size / input.size)) * 100).toFixed(2) }}% off)</span>
                       </dd>
                     </dl>
@@ -246,7 +234,10 @@
         <div class="card" v-if="inputURL && outputURL">
           <h4 class="card-header">Comparing images</h4>
           <div class="card-body">
-            <vue-compare-image v-if="inputURL && outputURL" :left-image="inputURL" :left-image-alt="input.name" left-label="Input image" :right-image="outputURL" :right-image-alt="output.name" right-label="Output image"></vue-compare-image>
+            <img-comparison-slider>
+              <img slot="first" :src="inputURL" :alt="input.name">
+              <img slot="second" :src="outputURL" :alt="output.name">
+            </img-comparison-slider>
           </div>
         </div>
       </div>
@@ -256,17 +247,16 @@
         <p class="heart"></p>
         <nav class="nav flex-wrap justify-content-center mb-3">
           <a class="nav-link" href="https://github.com/j9t/compressorjs-next">GitHub</a>
-          <a class="nav-link" href="https://github.com/j9t/compressorjs-next/releases">Releases</a>
+          <!-- <a class="nav-link" href="https://github.com/j9t/compressorjs-next/releases">Releases</a> -->
           <a class="nav-link" href="https://github.com/j9t/compressorjs-next/blob/main/LICENSE">License</a>
           <a class="nav-link" href="https://meiert.com/">About</a>
         </nav>
       </div>
     </footer>
-    <script src="https://unpkg.com/jquery@3/dist/jquery.slim.min.js" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/bootstrap@4/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/vue@2/dist/vue.min.js" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/vue-compare-image@0.2/dist/vueCompareImage.umd.min.js" crossorigin="anonymous"></script>
-    <script src="js/compressor.js"></script>
-    <script src="js/main.js"></script>
+    <script src="https://unpkg.com/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3.5.28/dist/vue.global.prod.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/img-comparison-slider@8.0.7/dist/index.js" type="module"></script>
+    <script src="setup/compressor.js"></script>
+    <script src="setup/default.js"></script>
   </body>
 </html>

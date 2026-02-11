@@ -1,3 +1,13 @@
+h1 + p,
+.heart {
+  margin-bottom: 0;
+}
+
+label,
+button {
+  cursor: pointer;
+}
+
 [v-cloak] {
   display: none;
 }
@@ -16,14 +26,18 @@
   position: relative;
 }
 
+.heart,
+img-comparison-slider,
+img-comparison-slider img {
+  width: 100%;
+}
+
 .heart {
   color: #ddd;
   height: 2rem;
   line-height: 2rem;
-  margin-bottom: 0;
   margin-top: 1rem;
   text-align: center;
-  width: 100%;
 }
 
 .heart:hover {
