@@ -1,3 +1,5 @@
 coverage/
+dist/
+docs/js/compressor.js
 node_modules/
 *.map
