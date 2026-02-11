@@ -39,6 +39,7 @@
 * Replaced `uglify-js` with `terser`
 * Migrated to ESLint flat config
 * Removed issue report templates and requirements
+* Reviewed and revised entire project
 
 ## 1.2.1 (Feb 28, 2023)
 

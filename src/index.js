@@ -88,7 +88,7 @@ export default class Compressor {
         let orientation = 1;
 
         if (checkOrientation) {
-          // Reset the orientation value to its default value 1
+          // Reset the orientation value to its default value (1)
           // as some iOS browsers will render image with its orientation
           orientation = resetAndGetOrientation(result);
 
@@ -105,7 +105,7 @@ export default class Compressor {
           if (
             !URL
 
-            // Generate a new URL with the default orientation value 1.
+            // Generate a new URL with the default orientation value (1)
             || orientation > 1
           ) {
             data.url = arrayBufferToDataURL(result, mimeType);
@@ -155,7 +155,7 @@ export default class Compressor {
     };
 
     // Match all browsers that use WebKit as the layout engine in iOS devices,
-    // such as Safari for iOS, Chrome for iOS, and in-app browsers.
+    // such as Safari for iOS, Chrome for iOS, and in-app browsers
     if (WINDOW.navigator && /(?:iPad|iPhone|iPod).*?AppleWebKit/i.test(WINDOW.navigator.userAgent)) {
       // Fix the `The operation is insecure` error (#57)
       image.crossOrigin = 'anonymous';
@@ -274,7 +274,7 @@ export default class Compressor {
       fillStyle = '#fff';
     }
 
-    // Override the default fill color (#000, black)
+    // Override the default fill color (`#000`, black)
     context.fillStyle = fillStyle;
     context.fillRect(0, 0, width, height);
 
@@ -356,7 +356,7 @@ export default class Compressor {
     this.revokeUrl();
 
     if (result) {
-      // Returns original file if the result is greater than it and without size related options
+      // Returns original file if the result is greater than it and without size-related options
       if (
         options.strict
         && !options.retainExif
@@ -388,7 +388,7 @@ export default class Compressor {
         }
       }
     } else {
-      // Returns original file if the result is null in some cases.
+      // Returns original file if the result is null in some cases
       result = file;
     }
 

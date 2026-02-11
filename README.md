@@ -326,7 +326,3 @@ compressor.abort();
 ## Browser support
 
 Supports [browserslist `defaults`](https://browsersl.ist/#q=defaults).
-
-## License
-
-[MIT](https://opensource.org/licenses/MIT) © [Chen Fengyuan](https://chenfengyuan.com/), [Jens Oliver Meiert](https://meiert.com/)

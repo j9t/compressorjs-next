@@ -248,7 +248,7 @@ export function getAdjustedSizes(
     width,
   },
 
-  // 'none' | 'contain' | 'cover'
+  // `none` | `contain` | `cover`
   type = 'none',
 ) {
   const isValidWidth = isPositiveNumber(width);
