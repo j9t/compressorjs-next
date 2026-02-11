@@ -1,4 +1,4 @@
-# Compressor.js Next (Beta)
+# Compressor.js Next
 
 [![npm version](https://img.shields.io/npm/v/compressorjs-next.svg)](https://www.npmjs.com/package/compressorjs-next) [![Build status](https://github.com/j9t/compressorjs-next/workflows/Tests/badge.svg)](https://github.com/j9t/compressorjs-next/actions) [![Socket](https://badge.socket.dev/npm/package/compressorjs-next)](https://socket.dev/npm/package/compressorjs-next)
 
