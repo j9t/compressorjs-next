@@ -8,7 +8,7 @@ const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
 const name = 'Compressor';
 const fileName = 'compressor';
 const banner = `/*!
- * ${name}.js v${pkg.version}
+ * ${name}.js Next v${pkg.version}
  * https://github.com/j9t/compressorjs-next
  *
  * Copyright 2018–2024 Chen Fengyuan
