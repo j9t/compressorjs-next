@@ -36,7 +36,7 @@
               <a class="nav-link" href="https://github.com/j9t/compressorjs-next" title="View the GitHub project">GitHub</a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link" href="https://meiert.com/" title="Explore more projects">Explore</a>
+              <a class="nav-link" href="https://www.npmjs.com/~j9t" title="Explore more projects">Explore</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link" href="https://meiert.com/" title="About the author">About</a>
@@ -155,7 +155,12 @@
                 <div class="form-group row">
                   <label for="inputMimeType" class="col-5 col-form-label">mimeType</label>
                   <div class="col-7">
-                    <input type="text" name="mimeType" class="form-control" id="inputMimeType" placeholder="auto" v-model.number="options.mimeType">
+                    <select class="form-control" name="mimeType" id="inputMimeType" v-model="options.mimeType">
+                      <option value="auto">auto</option>
+                      <option value="image/jpeg">image/jpeg</option>
+                      <option value="image/png">image/png</option>
+                      <option value="image/webp">image/webp</option>
+                    </select>
                   </div>
                 </div>
                 <div class="form-group row">
