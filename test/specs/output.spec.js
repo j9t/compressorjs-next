@@ -55,9 +55,10 @@ describe('output options', () => {
   describe('convertSize', () => {
     it('should not convert when file size is below `convertSize`', async () => {
       const image = await loadImageAsBlob(TEST_IMAGE_PNG);
+      const compressor = new Compressor(image, { convertTypes: ['image/png'] });
       const { result } = await compress(image, { convertTypes: ['image/png'] });
 
-      expect(image.size).toBeLessThan(5000000);
+      expect(image.size).toBeLessThan(compressor.options.convertSize);
       expect(image.type).toBe('image/png');
       expect(result.type).toBe('image/png');
     });
