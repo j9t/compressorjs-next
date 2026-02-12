@@ -4,7 +4,7 @@
 
 Modernized, optimized, and maintained fork of [Fengyuan Chen’s Compressor.js](https://github.com/fengyuanchen/compressorjs).
 
-A JavaScript image compressor. Uses the browser’s native [HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) method to do the compression work, which means it is **lossy compression**, **asynchronous**, and has **different compression effects in different browsers**. Generally use this to precompress an image on the client side before uploading it.
+A JavaScript image compressor and converter. Uses the browser’s native [HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) method to do the compression work, which means it is **lossy compression**, **asynchronous**, and has **different compression effects in different browsers**. Generally use this to precompress an image on the client side before uploading it.
 
 ## Table of contents
 

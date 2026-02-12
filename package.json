@@ -13,7 +13,7 @@
       "url": "https://chenfengyuan.com/"
     }
   ],
-  "description": "JavaScript image compressor.",
+  "description": "JavaScript image compressor and converter",
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@babel/preset-env": "^7.29.0",
@@ -53,6 +53,8 @@
     "client-side",
     "compress",
     "compressor",
+    "conversion",
+    "converter",
     "image",
     "image-compression",
     "image-processing",
@@ -90,5 +92,5 @@
   "sideEffects": false,
   "type": "module",
   "types": "types/index.d.ts",
-  "version": "1.0.1"
+  "version": "1.0.2"
 }
