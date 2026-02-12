@@ -81,8 +81,9 @@ export default {
   mimeType: 'auto',
 
   /**
-   * Files whose file type is included in this list,
-   * and whose file size exceeds the `convertSize` value will be converted to JPEG.
+   * Files whose file type is included in this list and
+   * whose file size exceeds the `convertSize` value
+   * will be converted to JPEG.
    * @type {string｜Array}
    */
   convertTypes: [],
@@ -90,7 +91,6 @@ export default {
   /**
    * Files over this size (5 MB by default) whose type is in `convertTypes`
    * will be converted to JPEG.
-   * To disable this, set `convertTypes` to `[]` or the value to `Infinity`.
    * @type {number}
    */
   convertSize: 5000000,

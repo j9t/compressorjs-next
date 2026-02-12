@@ -245,16 +245,16 @@ The [MIME type](https://webglossary.info/terms/mime-type/) of the output image. 
   - `["image/png", "image/webp"]`
   - `"image/png,image/webp"`
 
-Files whose file type is included in this list, and whose file size exceeds the `convertSize` value will be converted to JPEG.
+Files whose file type is included in this list and whose file size exceeds the `convertSize` value will be converted to JPEG.
 
 For image file type support, see the [Image file type and format guide](https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types).
 
 ### `convertSize`
 
 * Type: `number`
-* Default: `5000000` (5 MB)
+* Default: `5000000` (5 MB)
 
-Files whose file type is included in the `convertTypes` list, and whose file size exceeds this value will be converted to JPEG. To disable this, just set the value to `Infinity`.
+Files whose file type is included in the `convertTypes` list and whose file size exceeds this value will be converted to JPEG. Can also be disabled through the value `Infinity`.
 
 **Examples:**
 
