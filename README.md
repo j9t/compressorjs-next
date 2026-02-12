@@ -22,7 +22,12 @@ A JavaScript image compressor and converter. Uses the browser’s native [HTMLCa
 
 Change the package name from `compressorjs` to `compressorjs-next` in your `package.json` and imports (`import Compressor from 'compressorjs-next'`).
 
-The API is otherwise the same, with these exceptions: ESM is now the default module format (CommonJS is still supported), the `noConflict()` method has been removed, and Internet Explorer is no longer supported.
+The API is otherwise the same, with these exceptions (as of 1.1.0—follow [the changelog](https://github.com/j9t/compressorjs-next/blob/main/CHANGELOG.md) from there):
+
+* ESM is now the default module format (CommonJS is still supported)
+* The `noConflict()` method has been removed
+* The default for `convertTypes` has changed from `['image/png']` to `[]`
+* Internet Explorer is no longer supported
 
 ## Main files
 
@@ -235,12 +240,12 @@ The [MIME type](https://webglossary.info/terms/mime-type/) of the output image. 
 ### `convertTypes`
 
 * Type: `Array` or `string` (multiple types should be separated by commas)
-* Default: `["image/png"]`
+* Default: `[]`
 * Examples:
   - `["image/png", "image/webp"]`
   - `"image/png,image/webp"`
 
-Files whose file type is included in this list, and whose file size exceeds the `convertSize` value will be converted to JPEGs.
+Files whose file type is included in this list, and whose file size exceeds the `convertSize` value will be converted to JPEG.
 
 For image file type support, see the [Image file type and format guide](https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types).
 
@@ -249,7 +254,7 @@ For image file type support, see the [Image file type and format guide](https://
 * Type: `number`
 * Default: `5000000` (5 MB)
 
-Files whose file type is included in the `convertTypes` list, and whose file size exceeds this value will be converted to JPEGs. To disable this, just set the value to `Infinity`.
+Files whose file type is included in the `convertTypes` list, and whose file size exceeds this value will be converted to JPEG. To disable this, just set the value to `Infinity`.
 
 **Examples:**
 
