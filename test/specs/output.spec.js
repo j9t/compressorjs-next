@@ -10,7 +10,7 @@ describe('output options', () => {
       expect(compressor.options.mimeType).toBe('auto');
     });
 
-    it('should match the given mime type', async () => {
+    it('should match the given MIME type', async () => {
       const image = await loadImageAsBlob(TEST_IMAGE);
       image.name = 'test.jpg';
 
@@ -53,21 +53,19 @@ describe('output options', () => {
   });
 
   describe('convertSize', () => {
-    it('should not convert the image from PNG to JPEG', async () => {
+    it('should not convert when file size is below `convertSize`', async () => {
       const image = await loadImageAsBlob(TEST_IMAGE_PNG);
-      const compressor = new Compressor(image);
+      const compressor = new Compressor(image, { convertTypes: ['image/png'] });
+      const { result } = await compress(image, { convertTypes: ['image/png'] });
 
-      expect(compressor.options.convertSize).toBe(5000000);
-
-      const { result } = await compress(image);
-
+      expect(image.size).toBeLessThan(compressor.options.convertSize);
       expect(image.type).toBe('image/png');
       expect(result.type).toBe('image/png');
     });
 
     it('should convert the image from PNG to JPEG', async () => {
       const image = await loadImageAsBlob(TEST_IMAGE_PNG);
-      const { result } = await compress(image, { convertSize: 0 });
+      const { result } = await compress(image, { convertTypes: ['image/png'], convertSize: 0 });
 
       expect(image.type).toBe('image/png');
       expect(result.type).toBe('image/jpeg');
@@ -75,13 +73,20 @@ describe('output options', () => {
   });
 
   describe('convertTypes', () => {
+    it('should default to an empty array', async () => {
+      const image = await loadImageAsBlob(TEST_IMAGE_PNG);
+      const compressor = new Compressor(image);
+
+      expect(compressor.options.convertTypes).toEqual([]);
+    });
+
     it('should convert the image from PNG to JPEG', async () => {
       const image = await loadImageAsBlob(TEST_IMAGE_PNG);
-      const compressor = new Compressor(image, { convertSize: 0 });
+      const compressor = new Compressor(image, { convertTypes: ['image/png'], convertSize: 0 });
 
       expect(compressor.options.convertTypes).toEqual(['image/png']);
 
-      const { result } = await compress(image, { convertSize: 0 });
+      const { result } = await compress(image, { convertTypes: ['image/png'], convertSize: 0 });
 
       expect(image.type).toBe('image/png');
       expect(result.type).toBe('image/jpeg');
@@ -90,6 +95,18 @@ describe('output options', () => {
     it('should not convert the image from PNG to JPEG', async () => {
       const image = await loadImageAsBlob(TEST_IMAGE_PNG);
       const { result } = await compress(image, { convertTypes: [], convertSize: 0 });
+
+      expect(image.type).toBe('image/png');
+      expect(result.type).toBe('image/png');
+    });
+
+    it('should not convert when `mimeType` is explicitly set', async () => {
+      const image = await loadImageAsBlob(TEST_IMAGE_PNG);
+      const { result } = await compress(image, {
+        mimeType: 'image/png',
+        convertTypes: ['image/png'],
+        convertSize: 0,
+      });
 
       expect(image.type).toBe('image/png');
       expect(result.type).toBe('image/png');

@@ -4,6 +4,16 @@ All notable changes to Compressor.js Next are documented in this file, which is 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-02-12
+
+### Breaking Changes
+
+* **BREAKING:** Changed `convertTypes` default from `['image/png']` to `[]` to preserve PNG transparency by default ([fengyuanchen/compressorjs#184](https://github.com/fengyuanchen/compressorjs/issues/184)) [not made major release due to package being so new]
+
+### Fixed
+
+* Explicit `mimeType` option is no longer overridden by `convertTypes`/`convertSize` auto-conversion
+
 ## [1.0.2] - 2026-02-12
 
 ### Internal
@@ -21,10 +31,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Breaking Changes
 
-* Adopted [Compressor.js](https://github.com/fengyuanchen/compressorjs) as Compressor.js Next
-* Made ESM the default module format via `exports` field (CommonJS still supported)
-* Removed `noConflict()` method
-* Dropped Internet Explorer support
+* **BREAKING:** Adopted [Compressor.js](https://github.com/fengyuanchen/compressorjs) as Compressor.js Next
+* **BREAKING:** Made ESM the default module format via `exports` field (CommonJS still supported)
+* **BREAKING:** Removed `noConflict()` method
+* **BREAKING:** Dropped Internet Explorer support
 
 ### Fixed
 

@@ -38,6 +38,7 @@ export default class Compressor {
       ...DEFAULTS,
       ...options,
     };
+    this.mimeTypeSet = options && options.mimeType && isImageType(options.mimeType);
     this.aborted = false;
     this.result = null;
     this.url = null;
@@ -263,8 +264,10 @@ export default class Compressor {
 
     let fillStyle = 'transparent';
 
-    // Converts PNG files over the `convertSize` to JPEGs.
-    if (file.size > options.convertSize && options.convertTypes.indexOf(options.mimeType) >= 0) {
+    // Converts files over the `convertSize` to JPEG,
+    // unless the user explicitly set a `mimeType`.
+    if (!this.mimeTypeSet && file.size > options.convertSize
+      && options.convertTypes.indexOf(options.mimeType) >= 0) {
       options.mimeType = 'image/jpeg';
     }
 

@@ -82,14 +82,15 @@ export default {
 
   /**
    * Files whose file type is included in this list,
-   * and whose file size exceeds the `convertSize` value will be converted to JPEGs.
+   * and whose file size exceeds the `convertSize` value will be converted to JPEG.
    * @type {string｜Array}
    */
-  convertTypes: ['image/png'],
+  convertTypes: [],
 
   /**
-   * PNG files over this size (5 MB by default) will be converted to JPEGs.
-   * To disable this, just set the value to `Infinity`.
+   * Files over this size (5 MB by default) whose type is in `convertTypes`
+   * will be converted to JPEG.
+   * To disable this, set `convertTypes` to `[]` or the value to `Infinity`.
    * @type {number}
    */
   convertSize: 5000000,

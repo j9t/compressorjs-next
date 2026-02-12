@@ -30,7 +30,7 @@ describe('behavior options', () => {
       expect(result).toBe(image);
     });
 
-    it('should be ignored when the `mimeType` option is set and its value is different from the mime type of the image', async () => {
+    it('should be ignored when the `mimeType` option is set and its value is different from the MIME type of the image', async () => {
       const image = await loadImageAsBlob(TEST_IMAGE);
       const { result } = await compress(image, { mimeType: 'image/png' });
 
