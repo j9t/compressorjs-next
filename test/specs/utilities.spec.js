@@ -1,16 +1,18 @@
 import { describe, it, expect } from 'vitest';
-import { utilities, loadImageAsBlob, TEST_IMAGE_PNG } from '../setup.js';
+import { utilities, loadImageAsBlob, TEST_IMAGE, TEST_IMAGE_PNG } from '../setup.js';
 
 const {
   isPositiveNumber,
   isImageType,
   imageTypeToExtension,
+  isCanvasReliable,
   arrayBufferToDataURL,
   normalizeDecimalNumber,
   getAdjustedSizes,
   parseOrientation,
   getExif,
   insertExif,
+  stripExif,
   uint8ArrayToBlob,
 } = utilities;
 
@@ -250,6 +252,86 @@ describe('utilities', () => {
       expect(result).toBeInstanceOf(Blob);
       expect(result.type).toBe('image/jpeg');
       expect(result.size).toBe(3);
+    });
+  });
+
+  describe('isCanvasReliable', () => {
+    it('should return true in a normal browser environment', () => {
+      expect(isCanvasReliable()).toBe(true);
+    });
+
+    it('should return false when canvas data is corrupted', () => {
+      const original = CanvasRenderingContext2D.prototype.getImageData;
+
+      CanvasRenderingContext2D.prototype.getImageData = function (...args) {
+        const imageData = original.apply(this, args);
+
+        // Simulate fingerprinting resistance noise
+        imageData.data[0] = 255;
+        return imageData;
+      };
+
+      expect(isCanvasReliable()).toBe(false);
+
+      CanvasRenderingContext2D.prototype.getImageData = original;
+    });
+
+    it('should return false when canvas throws', () => {
+      const original = CanvasRenderingContext2D.prototype.getImageData;
+
+      CanvasRenderingContext2D.prototype.getImageData = function () {
+        throw new Error('SecurityError');
+      };
+
+      expect(isCanvasReliable()).toBe(false);
+
+      CanvasRenderingContext2D.prototype.getImageData = original;
+    });
+  });
+
+  describe('stripExif', () => {
+    it('should return data unchanged for non-JPEG input', () => {
+      const buffer = new Uint8Array([0x89, 0x50, 0x4E, 0x47]).buffer; // PNG signature
+      const result = stripExif(buffer);
+
+      expect(result).toBeInstanceOf(Uint8Array);
+      expect(result.length).toBe(4);
+      expect(result[0]).toBe(0x89);
+    });
+
+    it('should remove EXIF from a real JPEG', async () => {
+      const blob = await loadImageAsBlob(TEST_IMAGE);
+      const arrayBuffer = await blob.arrayBuffer();
+      const exifBefore = getExif(arrayBuffer);
+
+      expect(exifBefore.length).toBeGreaterThan(0);
+
+      const stripped = stripExif(arrayBuffer);
+      const exifAfter = getExif(stripped.buffer);
+
+      expect(exifAfter).toHaveLength(0);
+      expect(stripped.length).toBeLessThan(arrayBuffer.byteLength);
+
+      // Should still be a valid JPEG (starts with SOI marker)
+      expect(stripped[0]).toBe(0xFF);
+      expect(stripped[1]).toBe(0xD8);
+    });
+
+    it('should keep JPEG data intact when there is no EXIF', () => {
+      // Minimal JPEG: SOI + APP0 + SOS + EOI
+      const buffer = new Uint8Array([
+        0xFF, 0xD8, // SOI
+        0xFF, 0xE0, // APP0 marker
+        0x00, 0x02, // APP0 length (2 bytes)
+        0xFF, 0xDA, // SOS
+        0x00, 0x00, // dummy scan data
+        0xFF, 0xD9, // EOI
+      ]).buffer;
+      const result = stripExif(buffer);
+
+      expect(result[0]).toBe(0xFF);
+      expect(result[1]).toBe(0xD8);
+      expect(result.length).toBe(buffer.byteLength);
     });
   });
 });
