@@ -75,7 +75,7 @@ export default class Compressor {
     if (!isCanvasReliable()) {
       // Canvas is unreliable (e.g., Firefox fingerprinting resistance)—
       // bypass canvas to avoid corrupted output
-      if (mimeType === 'image/jpeg') {
+      if (mimeType === 'image/jpeg' && !options.retainExif) {
         // Strip EXIF data directly from the binary to preserve privacy
         const reader = new FileReader();
 
