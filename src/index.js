@@ -101,7 +101,6 @@ export default class Compressor {
 
           result.name = file.name;
           result.lastModified = date.getTime();
-          result.lastModifiedDate = date;
 
           this.result = result;
 
@@ -445,7 +444,6 @@ export default class Compressor {
         const date = new Date();
 
         result.lastModified = date.getTime();
-        result.lastModifiedDate = date;
         result.name = file.name;
 
         // Convert the extension to match its type

@@ -100,7 +100,6 @@ window.addEventListener('DOMContentLoaded', function () {
         var date = new Date();
 
         blob.lastModified = date.getTime();
-        blob.lastModifiedDate = date;
         blob.name = 'demo.jpg';
         vm.compress(blob);
       };
