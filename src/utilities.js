@@ -222,13 +222,18 @@ export function parseOrientation(orientation) {
   };
 }
 
+let cachedCanvasReliable;
+
 /**
  * Check if the browser’s canvas produces reliable pixel data.
  * Returns `false` when anti-fingerprinting measures (e.g., Firefox’s
  * `privacy.resistFingerprinting`) add noise to canvas output.
+ * The result is cached after the first call.
  * @returns {boolean} Returns `true` if canvas data is reliable.
  */
 export function isCanvasReliable() {
+  if (cachedCanvasReliable !== undefined) return cachedCanvasReliable;
+
   try {
     const canvas = document.createElement('canvas');
 
@@ -249,7 +254,7 @@ export function isCanvasReliable() {
 
     const result = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-    return result.data.every((value, index) => {
+    cachedCanvasReliable = result.data.every((value, index) => {
       const channel = index % 4;
 
       if (channel === 0) return value === (index & 0xFF);
@@ -258,8 +263,18 @@ export function isCanvasReliable() {
       return value === 255;
     });
   } catch {
-    return false;
+    cachedCanvasReliable = false;
   }
+
+  return cachedCanvasReliable;
+}
+
+/**
+ * Reset the cached canvas reliability result.
+ * Intended for testing only.
+ */
+export function resetCanvasReliableCache() {
+  cachedCanvasReliable = undefined;
 }
 
 /**
@@ -296,8 +311,15 @@ export function stripExif(arrayBuffer) {
       break;
     }
 
+    if (start + 3 >= byteLength) break;
+
     const segmentLength = dataView.getUint16(start + 2);
+
+    if (segmentLength < 2) break;
+
     const segmentEnd = start + 2 + segmentLength;
+
+    if (segmentEnd > byteLength) break;
 
     // Skip APP1 (EXIF) segments, keep everything else
     if (type !== 0xE1) {
