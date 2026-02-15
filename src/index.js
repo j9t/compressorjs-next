@@ -5,6 +5,7 @@ import {
 import {
   getAdjustedSizes,
   imageTypeToExtension,
+  isCanvasReliable,
   isImageType,
   isPositiveNumber,
   normalizeDecimalNumber,
@@ -13,6 +14,7 @@ import {
   arrayBufferToDataURL,
   getExif,
   insertExif,
+  stripExif,
   uint8ArrayToBlob,
 } from './utilities';
 
@@ -40,6 +42,7 @@ export default class Compressor {
     };
     this.mimeTypeSet = options && options.mimeType && isImageType(options.mimeType);
     this.aborted = false;
+    this.canvasFallback = false;
     this.result = null;
     this.url = null;
     this.init();
@@ -68,6 +71,68 @@ export default class Compressor {
     if (!ArrayBuffer) {
       options.checkOrientation = false;
       options.retainExif = false;
+    }
+
+    if (!isCanvasReliable()) {
+      // Canvas is unreliable (e.g., Firefox fingerprinting resistance)—
+      // bypass canvas to avoid corrupted output
+      console.warn('Compressor.js Next: Canvas data is unreliable (e.g., due to browser fingerprinting resistance)—compression, resizing, and format conversion are unavailable');
+      this.canvasFallback = true;
+      if (mimeType === 'image/jpeg' && !options.retainExif) {
+        // Strip EXIF data directly from the binary to preserve privacy
+        const reader = new FileReader();
+
+        this.reader = reader;
+        reader.onload = ({ target }) => {
+          if (this.aborted) return;
+
+          let result;
+
+          try {
+            const stripped = stripExif(target.result);
+
+            result = uint8ArrayToBlob(stripped, mimeType);
+          } catch {
+            this.fail(new Error('Failed to process the image data.'));
+            return;
+          }
+
+          const date = new Date();
+
+          result.name = file.name;
+          result.lastModified = date.getTime();
+
+          this.result = result;
+
+          if (options.success) {
+            options.success.call(this, result);
+          }
+        };
+        reader.onabort = () => {
+          this.fail(new Error('Aborted to read the image with FileReader.'));
+        };
+        reader.onerror = () => {
+          this.fail(new Error('Failed to read the image with FileReader.'));
+        };
+        reader.onloadend = () => {
+          this.reader = null;
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        // Non-JPEG: No EXIF to strip, return as-is
+        // Defer callback to match the normal async flow
+        Promise.resolve().then(() => {
+          if (this.aborted) return;
+
+          this.result = file;
+
+          if (options.success) {
+            options.success.call(this, file);
+          }
+        });
+      }
+
+      return;
     }
 
     const isJPEGImage = mimeType === 'image/jpeg';
@@ -379,7 +444,6 @@ export default class Compressor {
         const date = new Date();
 
         result.lastModified = date.getTime();
-        result.lastModifiedDate = date;
         result.name = file.name;
 
         // Convert the extension to match its type
@@ -392,6 +456,7 @@ export default class Compressor {
       }
     } else {
       // Returns original file if the result is null in some cases
+      console.warn('Compressor.js Next: Canvas produced no output—returning the original image');
       result = file;
     }
 

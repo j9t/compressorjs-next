@@ -4,6 +4,17 @@ All notable changes to Compressor.js Next are documented in this file, which is 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-02-15
+
+### Changed
+
+* Added warning when canvas is unreliable or produces no output
+* Removed deprecated `lastModifiedDate` property from output (use `lastModified` instead)
+
+### Fixed
+
+* Added detection for unreliable canvas (e.g., Firefox `privacy.resistFingerprinting`), falling back to returning the original image with EXIF stripped, instead of silently corrupted output ([fengyuanchen/compressorjs#177](https://github.com/fengyuanchen/compressorjs/issues/177))
+
 ## [1.1.0] - 2026-02-12
 
 ### Breaking Changes

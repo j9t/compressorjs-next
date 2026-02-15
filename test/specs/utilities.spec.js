@@ -1,16 +1,19 @@
-import { describe, it, expect } from 'vitest';
-import { utilities, loadImageAsBlob, TEST_IMAGE_PNG } from '../setup.js';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { utilities, loadImageAsBlob, TEST_IMAGE, TEST_IMAGE_PNG } from '../setup.js';
 
 const {
   isPositiveNumber,
   isImageType,
   imageTypeToExtension,
+  isCanvasReliable,
+  resetCanvasReliableCache,
   arrayBufferToDataURL,
   normalizeDecimalNumber,
   getAdjustedSizes,
   parseOrientation,
   getExif,
   insertExif,
+  stripExif,
   uint8ArrayToBlob,
 } = utilities;
 
@@ -250,6 +253,121 @@ describe('utilities', () => {
       expect(result).toBeInstanceOf(Blob);
       expect(result.type).toBe('image/jpeg');
       expect(result.size).toBe(3);
+    });
+  });
+
+  describe('isCanvasReliable', () => {
+    let originalGetImageData;
+
+    beforeEach(() => {
+      originalGetImageData = CanvasRenderingContext2D.prototype.getImageData;
+      resetCanvasReliableCache();
+    });
+
+    afterEach(() => {
+      CanvasRenderingContext2D.prototype.getImageData = originalGetImageData;
+      resetCanvasReliableCache();
+    });
+
+    it('should return true in a normal browser environment', () => {
+      expect(isCanvasReliable()).toBe(true);
+    });
+
+    it('should cache the result after the first call', () => {
+      expect(isCanvasReliable()).toBe(true);
+
+      // Corrupt canvas after caching
+      CanvasRenderingContext2D.prototype.getImageData = function (...args) {
+        const imageData = originalGetImageData.apply(this, args);
+
+        imageData.data[0] = 255;
+        return imageData;
+      };
+
+      // Should still return the cached true
+      expect(isCanvasReliable()).toBe(true);
+    });
+
+    it('should return false when canvas data is corrupted', () => {
+      CanvasRenderingContext2D.prototype.getImageData = function (...args) {
+        const imageData = originalGetImageData.apply(this, args);
+
+        // Simulate fingerprinting resistance noise
+        imageData.data[0] = 255;
+        return imageData;
+      };
+
+      expect(isCanvasReliable()).toBe(false);
+    });
+
+    it('should return false when canvas throws', () => {
+      CanvasRenderingContext2D.prototype.getImageData = function () {
+        throw new Error('SecurityError');
+      };
+
+      expect(isCanvasReliable()).toBe(false);
+    });
+  });
+
+  describe('stripExif', () => {
+    it('should return data unchanged for non-JPEG input', () => {
+      const buffer = new Uint8Array([0x89, 0x50, 0x4E, 0x47]).buffer; // PNG signature
+      const result = stripExif(buffer);
+
+      expect(result).toBeInstanceOf(Uint8Array);
+      expect(result.length).toBe(4);
+      expect(result[0]).toBe(0x89);
+    });
+
+    it('should remove EXIF from a real JPEG', async () => {
+      const blob = await loadImageAsBlob(TEST_IMAGE);
+      const arrayBuffer = await blob.arrayBuffer();
+      const exifBefore = getExif(arrayBuffer);
+
+      expect(exifBefore.length).toBeGreaterThan(0);
+
+      const stripped = stripExif(arrayBuffer);
+      const exifAfter = getExif(stripped.buffer);
+
+      expect(exifAfter).toHaveLength(0);
+      expect(stripped.length).toBeLessThan(arrayBuffer.byteLength);
+
+      // Should still be a valid JPEG (starts with SOI marker)
+      expect(stripped[0]).toBe(0xFF);
+      expect(stripped[1]).toBe(0xD8);
+    });
+
+    it('should keep JPEG data intact when there is no EXIF', () => {
+      // Minimal JPEG: SOI + APP0 + SOS + EOI
+      const buffer = new Uint8Array([
+        0xFF, 0xD8, // SOI
+        0xFF, 0xE0, // APP0 marker
+        0x00, 0x02, // APP0 length (2 bytes)
+        0xFF, 0xDA, // SOS
+        0x00, 0x00, // dummy scan data
+        0xFF, 0xD9, // EOI
+      ]).buffer;
+      const result = stripExif(buffer);
+
+      expect(result[0]).toBe(0xFF);
+      expect(result[1]).toBe(0xD8);
+      expect(result.length).toBe(buffer.byteLength);
+    });
+
+    it('should handle a malformed JPEG with truncated segment length', () => {
+      // APP1 marker with length larger than remaining buffer
+      const buffer = new Uint8Array([
+        0xFF, 0xD8, // SOI
+        0xFF, 0xE1, // APP1 (EXIF) marker
+        0x00, 0xFF, // Length = 255 (but only 2 bytes remain)
+        0x00, 0x00, // Truncated data
+      ]).buffer;
+      const result = stripExif(buffer);
+
+      expect(result).toBeInstanceOf(Uint8Array);
+      expect(result.length).toBeLessThanOrEqual(buffer.byteLength);
+      expect(result[0]).toBe(0xFF);
+      expect(result[1]).toBe(0xD8);
     });
   });
 });

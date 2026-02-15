@@ -24,6 +24,7 @@ window.addEventListener('DOMContentLoaded', function () {
           success: function (result) {
             console.log('Output: ', result);
 
+            vm.canvasFallback = this.canvasFallback || false;
             vm.outputURL = URL.createObjectURL(result);
             vm.output = result;
             vm.$refs.input.value = '';
@@ -32,6 +33,7 @@ window.addEventListener('DOMContentLoaded', function () {
             window.alert(err.message);
           },
         },
+        canvasFallback: false,
         inputURL: '',
         outputURL: '',
         input: {},
@@ -98,7 +100,6 @@ window.addEventListener('DOMContentLoaded', function () {
         var date = new Date();
 
         blob.lastModified = date.getTime();
-        blob.lastModifiedDate = date;
         blob.name = 'demo.jpg';
         vm.compress(blob);
       };
