@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { utilities, loadImageAsBlob, TEST_IMAGE, TEST_IMAGE_PNG } from '../setup.js';
 
 const {
@@ -6,6 +6,7 @@ const {
   isImageType,
   imageTypeToExtension,
   isCanvasReliable,
+  resetCanvasReliableCache,
   arrayBufferToDataURL,
   normalizeDecimalNumber,
   getAdjustedSizes,
@@ -256,15 +257,40 @@ describe('utilities', () => {
   });
 
   describe('isCanvasReliable', () => {
+    let originalGetImageData;
+
+    beforeEach(() => {
+      originalGetImageData = CanvasRenderingContext2D.prototype.getImageData;
+      resetCanvasReliableCache();
+    });
+
+    afterEach(() => {
+      CanvasRenderingContext2D.prototype.getImageData = originalGetImageData;
+      resetCanvasReliableCache();
+    });
+
     it('should return true in a normal browser environment', () => {
       expect(isCanvasReliable()).toBe(true);
     });
 
-    it('should return false when canvas data is corrupted', () => {
-      const original = CanvasRenderingContext2D.prototype.getImageData;
+    it('should cache the result after the first call', () => {
+      expect(isCanvasReliable()).toBe(true);
 
+      // Corrupt canvas after caching
       CanvasRenderingContext2D.prototype.getImageData = function (...args) {
-        const imageData = original.apply(this, args);
+        const imageData = originalGetImageData.apply(this, args);
+
+        imageData.data[0] = 255;
+        return imageData;
+      };
+
+      // Should still return the cached true
+      expect(isCanvasReliable()).toBe(true);
+    });
+
+    it('should return false when canvas data is corrupted', () => {
+      CanvasRenderingContext2D.prototype.getImageData = function (...args) {
+        const imageData = originalGetImageData.apply(this, args);
 
         // Simulate fingerprinting resistance noise
         imageData.data[0] = 255;
@@ -272,20 +298,14 @@ describe('utilities', () => {
       };
 
       expect(isCanvasReliable()).toBe(false);
-
-      CanvasRenderingContext2D.prototype.getImageData = original;
     });
 
     it('should return false when canvas throws', () => {
-      const original = CanvasRenderingContext2D.prototype.getImageData;
-
       CanvasRenderingContext2D.prototype.getImageData = function () {
         throw new Error('SecurityError');
       };
 
       expect(isCanvasReliable()).toBe(false);
-
-      CanvasRenderingContext2D.prototype.getImageData = original;
     });
   });
 
