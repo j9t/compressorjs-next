@@ -202,6 +202,9 @@
                 <span>Output image <small class="text-secondary">(compressed image)</small></span>
                 <a class="btn btn-sm btn-blocks btn-outline-primary" :download="output.name" :href="outputURL" title="Download the compressed image">Download</a>
               </h5>
+              <div class="alert alert-warning mb-0 rounded-0 border-start-0 border-end-0" v-if="canvasFallback">
+                Canvas data is unreliable (e.g., due to browser fingerprinting resistance). Compression was skipped; only EXIF data was stripped.
+              </div>
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-4 d-flex mb-3">

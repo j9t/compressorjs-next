@@ -42,6 +42,7 @@ export default class Compressor {
     };
     this.mimeTypeSet = options && options.mimeType && isImageType(options.mimeType);
     this.aborted = false;
+    this.canvasFallback = false;
     this.result = null;
     this.url = null;
     this.init();
@@ -75,6 +76,8 @@ export default class Compressor {
     if (!isCanvasReliable()) {
       // Canvas is unreliable (e.g., Firefox fingerprinting resistance)—
       // bypass canvas to avoid corrupted output
+      console.warn('Compressor.js Next: Canvas data is unreliable (e.g., due to browser fingerprinting resistance)—compression, resizing, and format conversion are unavailable');
+      this.canvasFallback = true;
       if (mimeType === 'image/jpeg' && !options.retainExif) {
         // Strip EXIF data directly from the binary to preserve privacy
         const reader = new FileReader();
@@ -455,6 +458,7 @@ export default class Compressor {
       }
     } else {
       // Returns original file if the result is null in some cases
+      console.warn('Compressor.js Next: Canvas produced no output—returning the original image');
       result = file;
     }
 

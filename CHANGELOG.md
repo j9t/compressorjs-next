@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
-* Detect unreliable canvas (e.g., Firefox `privacy.resistFingerprinting`) and fall back to returning the original image with EXIF stripped, instead of silently corrupted output ([fengyuanchen/compressorjs#177](https://github.com/fengyuanchen/compressorjs/issues/177))
+* Added detection for unreliable canvas (e.g., Firefox `privacy.resistFingerprinting`), falling back to returning the original image with EXIF stripped, instead of silently corrupted output ([fengyuanchen/compressorjs#177](https://github.com/fengyuanchen/compressorjs/issues/177))
+* Added warning when canvas is unreliable or produces no output
 
 ## [1.1.0] - 2026-02-12
 
