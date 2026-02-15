@@ -286,7 +286,6 @@ export function stripExif(arrayBuffer) {
   const dataView = new DataView(arrayBuffer);
   const { byteLength } = dataView;
   const pieces = [];
-  let start = 0;
 
   // Only handle JPEG data (starts with SOI marker FF D8)
   if (byteLength < 4
@@ -297,7 +296,7 @@ export function stripExif(arrayBuffer) {
 
   // Keep SOI marker
   pieces.push(new Uint8Array(arrayBuffer, 0, 2));
-  start = 2;
+  let start = 2;
 
   while (start + 3 < byteLength) {
     const marker = dataView.getUint8(start);
