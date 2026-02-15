@@ -353,5 +353,21 @@ describe('utilities', () => {
       expect(result[1]).toBe(0xD8);
       expect(result.length).toBe(buffer.byteLength);
     });
+
+    it('should handle a malformed JPEG with truncated segment length', () => {
+      // APP1 marker with length larger than remaining buffer
+      const buffer = new Uint8Array([
+        0xFF, 0xD8, // SOI
+        0xFF, 0xE1, // APP1 (EXIF) marker
+        0x00, 0xFF, // Length = 255 (but only 2 bytes remain)
+        0x00, 0x00, // Truncated data
+      ]).buffer;
+      const result = stripExif(buffer);
+
+      expect(result).toBeInstanceOf(Uint8Array);
+      expect(result.length).toBeLessThanOrEqual(buffer.byteLength);
+      expect(result[0]).toBe(0xFF);
+      expect(result[1]).toBe(0xD8);
+    });
   });
 });
