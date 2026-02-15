@@ -81,8 +81,19 @@ export default class Compressor {
 
         this.reader = reader;
         reader.onload = ({ target }) => {
-          const stripped = stripExif(target.result);
-          const result = uint8ArrayToBlob(stripped, mimeType);
+          if (this.aborted) return;
+
+          let result;
+
+          try {
+            const stripped = stripExif(target.result);
+
+            result = uint8ArrayToBlob(stripped, mimeType);
+          } catch {
+            this.fail(new Error('Failed to process the image data.'));
+            return;
+          }
+
           const date = new Date();
 
           result.name = file.name;
@@ -109,6 +120,8 @@ export default class Compressor {
         // Non-JPEG: No EXIF to strip, return as-is
         // Defer callback to match the normal async flow
         Promise.resolve().then(() => {
+          if (this.aborted) return;
+
           this.result = file;
 
           if (options.success) {
