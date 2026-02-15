@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Compressor, loadImageAsBlob, compress, utilities, TEST_IMAGE, TEST_IMAGE_PNG } from '../setup.js';
 
-const { getExif } = utilities;
+const { getExif, resetCanvasReliableCache } = utilities;
 
 function blobToArrayBuffer(blob) {
   return new Promise((resolve) => {
@@ -125,6 +125,7 @@ describe('behavior options', () => {
 
     beforeEach(() => {
       originalGetImageData = CanvasRenderingContext2D.prototype.getImageData;
+      resetCanvasReliableCache();
 
       // Simulate fingerprinting resistance by corrupting canvas reads
       CanvasRenderingContext2D.prototype.getImageData = function (...args) {
@@ -137,6 +138,7 @@ describe('behavior options', () => {
 
     afterEach(() => {
       CanvasRenderingContext2D.prototype.getImageData = originalGetImageData;
+      resetCanvasReliableCache();
     });
 
     it('should strip EXIF and return result for JPEG when canvas is unreliable', async () => {
