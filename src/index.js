@@ -5,6 +5,7 @@ import {
 import {
   getAdjustedSizes,
   imageTypeToExtension,
+  isCanvasReliable,
   isImageType,
   isPositiveNumber,
   normalizeDecimalNumber,
@@ -13,6 +14,7 @@ import {
   arrayBufferToDataURL,
   getExif,
   insertExif,
+  stripExif,
   uint8ArrayToBlob,
 } from './utilities';
 
@@ -68,6 +70,54 @@ export default class Compressor {
     if (!ArrayBuffer) {
       options.checkOrientation = false;
       options.retainExif = false;
+    }
+
+    if (!isCanvasReliable()) {
+      // Canvas is unreliable (e.g., Firefox fingerprinting resistance)—
+      // bypass canvas to avoid corrupted output
+      if (mimeType === 'image/jpeg') {
+        // Strip EXIF data directly from the binary to preserve privacy
+        const reader = new FileReader();
+
+        this.reader = reader;
+        reader.onload = ({ target }) => {
+          const stripped = stripExif(target.result);
+          const result = uint8ArrayToBlob(stripped, mimeType);
+          const date = new Date();
+
+          result.name = file.name;
+          result.lastModified = date.getTime();
+          result.lastModifiedDate = date;
+
+          this.result = result;
+
+          if (options.success) {
+            options.success.call(this, result);
+          }
+        };
+        reader.onabort = () => {
+          this.fail(new Error('Aborted to read the image with FileReader.'));
+        };
+        reader.onerror = () => {
+          this.fail(new Error('Failed to read the image with FileReader.'));
+        };
+        reader.onloadend = () => {
+          this.reader = null;
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        // Non-JPEG: No EXIF to strip, return as-is
+        // Defer callback to match the normal async flow
+        Promise.resolve().then(() => {
+          this.result = file;
+
+          if (options.success) {
+            options.success.call(this, file);
+          }
+        });
+      }
+
+      return;
     }
 
     const isJPEGImage = mimeType === 'image/jpeg';

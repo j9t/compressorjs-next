@@ -222,6 +222,103 @@ export function parseOrientation(orientation) {
   };
 }
 
+/**
+ * Check if the browser’s canvas produces reliable pixel data.
+ * Returns `false` when anti-fingerprinting measures (e.g., Firefox’s
+ * `privacy.resistFingerprinting`) add noise to canvas output.
+ * @returns {boolean} Returns `true` if canvas data is reliable.
+ */
+export function isCanvasReliable() {
+  try {
+    const canvas = document.createElement('canvas');
+
+    canvas.width = 4;
+    canvas.height = 4;
+
+    const ctx = canvas.getContext('2d');
+    const imageData = ctx.createImageData(canvas.width, canvas.height);
+
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      imageData.data[i] = i;
+      imageData.data[i + 1] = 1;
+      imageData.data[i + 2] = 2;
+      imageData.data[i + 3] = 255;
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+
+    const result = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    return result.data.every((value, index) => {
+      const channel = index % 4;
+
+      if (channel === 0) return value === (index & 0xFF);
+      if (channel === 1) return value === 1;
+      if (channel === 2) return value === 2;
+      return value === 255;
+    });
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Strip all APP1 (EXIF) segments from a JPEG array buffer.
+ * @param {ArrayBuffer} arrayBuffer - The JPEG data to strip.
+ * @returns {Uint8Array} The JPEG data without EXIF segments.
+ */
+export function stripExif(arrayBuffer) {
+  const dataView = new DataView(arrayBuffer);
+  const { byteLength } = dataView;
+  const pieces = [];
+  let start = 0;
+
+  // Only handle JPEG data (starts with SOI marker FF D8)
+  if (byteLength < 4
+    || dataView.getUint8(0) !== 0xFF
+    || dataView.getUint8(1) !== 0xD8) {
+    return new Uint8Array(arrayBuffer);
+  }
+
+  // Keep SOI marker
+  pieces.push(new Uint8Array(arrayBuffer, 0, 2));
+  start = 2;
+
+  while (start + 3 < byteLength) {
+    const marker = dataView.getUint8(start);
+    const type = dataView.getUint8(start + 1);
+
+    if (marker !== 0xFF) break;
+
+    // SOS (Start of Scan)—the rest is image data, keep it all
+    if (type === 0xDA) {
+      pieces.push(new Uint8Array(arrayBuffer, start));
+      break;
+    }
+
+    const segmentLength = dataView.getUint16(start + 2);
+    const segmentEnd = start + 2 + segmentLength;
+
+    // Skip APP1 (EXIF) segments, keep everything else
+    if (type !== 0xE1) {
+      pieces.push(new Uint8Array(arrayBuffer, start, segmentEnd - start));
+    }
+
+    start = segmentEnd;
+  }
+
+  const totalLength = pieces.reduce((sum, piece) => sum + piece.length, 0);
+  const result = new Uint8Array(totalLength);
+  let offset = 0;
+
+  for (const piece of pieces) {
+    result.set(piece, offset);
+    offset += piece.length;
+  }
+
+  return result;
+}
+
 const REGEXP_DECIMALS = /\.\d*(?:0|9){12}\d*$/;
 
 /**
