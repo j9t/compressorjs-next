@@ -4,6 +4,12 @@ All notable changes to Compressor.js Next are documented in this file, which is 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-02-16
+
+### Fixed
+
+* Added `types` condition to `exports` field so TypeScript finds type declarations with modern `moduleResolution` settings ([#21](https://github.com/j9t/compressorjs-next/issues/21))
+
 ## [1.1.1] - 2026-02-15
 
 ### Changed
