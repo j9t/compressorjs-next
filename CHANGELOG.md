@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [1.1.1] - 2026-02-15
 
+### Fixed
+
+* Added detection for unreliable canvas (e.g., Firefox `privacy.resistFingerprinting`), falling back to returning the original image with EXIF stripped, instead of silently corrupted output ([fengyuanchen/compressorjs#177](https://github.com/fengyuanchen/compressorjs/issues/177))
+
 ### Added
 
 * Added warning when canvas is unreliable or produces no output
@@ -20,19 +24,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 * Removed deprecated `lastModifiedDate` property from output (use `lastModified` instead)
 
-### Fixed
-
-* Added detection for unreliable canvas (e.g., Firefox `privacy.resistFingerprinting`), falling back to returning the original image with EXIF stripped, instead of silently corrupted output ([fengyuanchen/compressorjs#177](https://github.com/fengyuanchen/compressorjs/issues/177))
-
 ## [1.1.0] - 2026-02-12
-
-### Changed
-
-* **BREAKING:** Changed `convertTypes` default from `['image/png']` to `[]` to preserve PNG transparency by default ([fengyuanchen/compressorjs#184](https://github.com/fengyuanchen/compressorjs/issues/184)) [not made major release due to package being so new]
 
 ### Fixed
 
 * Explicit `mimeType` option is no longer overridden by `convertTypes`/`convertSize` auto-conversion
+
+### Changed
+
+* **BREAKING:** Changed `convertTypes` default from `['image/png']` to `[]` to preserve PNG transparency by default ([fengyuanchen/compressorjs#184](https://github.com/fengyuanchen/compressorjs/issues/184)) [not made major release due to package being so new]
 
 ## [1.0.2] - 2026-02-12
 
@@ -48,6 +48,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * Added makeshift development server option
 
 ## [1.0.0] - 2026-02-11
+
+### Fixed
+
+* Fixed blob URL memory leak in error and abort paths
+* Fixed deprecated `substr()` usage
 
 ### Changed
 
@@ -71,13 +76,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Removed
 
+* Removed unused dependencies
 * Removed `blueimp-canvas-to-blob` dependency (`canvas.toBlob()` now universally supported)
 * Removed `is-blob` dependency (use native `instanceof Blob`)
-* Removed unused dependencies
 * Removed Karma/Mocha/Chai testing stack
 * Removed issue report templates and requirements
-
-### Fixed
-
-* Fixed blob URL memory leak in error and abort paths
-* Fixed deprecated `substr()` usage
