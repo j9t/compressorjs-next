@@ -12,9 +12,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [1.1.1] - 2026-02-15
 
-### Changed
+### Added
 
 * Added warning when canvas is unreliable or produces no output
+
+### Removed
+
 * Removed deprecated `lastModifiedDate` property from output (use `lastModified` instead)
 
 ### Fixed
@@ -23,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [1.1.0] - 2026-02-12
 
-### Breaking Changes
+### Changed
 
 * **BREAKING:** Changed `convertTypes` default from `['image/png']` to `[]` to preserve PNG transparency by default ([fengyuanchen/compressorjs#184](https://github.com/fengyuanchen/compressorjs/issues/184)) [not made major release due to package being so new]
 
@@ -33,54 +36,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [1.0.2] - 2026-02-12
 
-### Internal
+### Changed
 
 * Tightened package documentation
 
 ## [1.0.1] - 2026-02-11
 
-### Internal
+### Changed
 
 * Simplified demo
 * Added makeshift development server option
 
 ## [1.0.0] - 2026-02-11
 
-### Breaking Changes
+### Changed
 
 * **BREAKING:** Adopted [Compressor.js](https://github.com/fengyuanchen/compressorjs) as Compressor.js Next
 * **BREAKING:** Made ESM the default module format via `exports` field (CommonJS still supported)
 * **BREAKING:** Removed `noConflict()` method
 * **BREAKING:** Dropped Internet Explorer support
+* Updated all dependencies
+* Migrated from Karma/Mocha/Chai to Vitest with browser mode for cleaner ESM-native testing
+* Updated `.browserslistrc` to target only modern browsers, reducing transpilation overhead
+* Added `"type": "module"` for native ESM support
+* Added `"sideEffects": false` for better tree-shaking support
+* Converted all test files to `async`/`await` pattern
+* Added unit tests for utility functions
+* Added tests for blob URL cleanup verification
+* Updated TypeScript declarations
+* Replaced `uglify-js` with `terser`
+* Migrated to ESLint flat config
+* Reviewed and revised entire project
+* Refactored binary handling functions (`getExif`, `insertExif`, `arrayBufferToDataURL`) to use `DataView` instead of `Array.from()` for significantly better memory efficiency on large images
+
+### Removed
+
+* Removed `blueimp-canvas-to-blob` dependency (`canvas.toBlob()` now universally supported)
+* Removed `is-blob` dependency (use native `instanceof Blob`)
+* Removed unused dependencies
+* Removed Karma/Mocha/Chai testing stack
+* Removed issue report templates and requirements
 
 ### Fixed
 
 * Fixed blob URL memory leak in error and abort paths
 * Fixed deprecated `substr()` usage
-
-### Changed
-
-* Added `"type": "module"` for native ESM support
-* Added `"sideEffects": false` for better tree-shaking support
-* Migrated from Karma/Mocha/Chai to Vitest with browser mode for cleaner ESM-native testing
-* Converted all test files to `async`/`await` pattern
-* Added unit tests for utility functions
-* Added tests for blob URL cleanup verification
-* Updated TypeScript declarations
-
-### Performance
-
-* Refactored binary handling functions (`getExif`, `insertExif`, `arrayBufferToDataURL`) to use `DataView` instead of `Array.from()` for significantly better memory efficiency on large images
-* Updated `.browserslistrc` to target only modern browsers, reducing transpilation overhead
-
-### Internal
-
-* Updated all dependencies
-* Removed `blueimp-canvas-to-blob` dependency (`canvas.toBlob()` now universally supported)
-* Removed `is-blob` dependency (use native `instanceof Blob`)
-* Removed unused dependencies
-* Removed Karma/Mocha/Chai testing stack
-* Replaced `uglify-js` with `terser`
-* Migrated to ESLint flat config
-* Removed issue report templates and requirements
-* Reviewed and revised entire project
