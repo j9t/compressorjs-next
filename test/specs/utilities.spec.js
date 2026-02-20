@@ -267,7 +267,7 @@ describe('utilities', () => {
 
     it('should return false when canvas throws', () => {
       CanvasRenderingContext2D.prototype.getImageData = function () {
-        throw new Error('SecurityError');
+        throw new Error('Security error.');
       };
 
       expect(isCanvasReliable()).toBe(false);
