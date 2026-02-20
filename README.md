@@ -85,7 +85,7 @@ document.getElementById('file').addEventListener('change', (e) => {
     return;
   }
 
-  new Compressor(file, {
+  const compressor = new Compressor(file, {
     quality: 0.6,
 
     // The compression process is asynchronous,
