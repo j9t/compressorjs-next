@@ -321,6 +321,7 @@ export default class Compressor {
 
           if (blob.arrayBuffer) {
             blob.arrayBuffer().then(next).catch(() => {
+              if (this.aborted) return;
               this.fail(new Error('Failed to read the compressed image with Blob.arrayBuffer().'));
             });
           } else {
@@ -352,6 +353,7 @@ export default class Compressor {
 
           if (blob.arrayBuffer) {
             blob.arrayBuffer().then(next).catch(() => {
+              if (this.aborted) return;
               this.fail(new Error('Failed to read the compressed image with Blob.arrayBuffer().'));
             });
           } else {
