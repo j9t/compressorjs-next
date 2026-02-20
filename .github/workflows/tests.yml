@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -40,7 +41,7 @@ jobs:
     strategy:
       matrix:
         node: ['lts/*', 'current']
-    name: "Node ${{ matrix.node }} (macOS)"
+    name: "Node ${{ matrix.node }} (macOS, all browsers)"
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
@@ -50,9 +51,5 @@ jobs:
           cache: npm
       - name: "Install dependencies"
         run: npm ci
-      - name: "Lint"
-        run: npm run lint
-      - name: "Build"
-        run: npm run build
-      - name: "Test"
-        run: npm test
+      - name: "Test (full browser matrix)"
+        run: npm run test:full
