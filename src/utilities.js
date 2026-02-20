@@ -90,7 +90,7 @@ export function arrayBufferToDataURL(arrayBuffer, mimeType) {
  * @param {ArrayBuffer} arrayBuffer - The array buffer to read.
  * @returns {number} The read orientation value.
  */
-export function resetAndGetOrientation(arrayBuffer) {
+export function resetOrientation(arrayBuffer) {
   const dataView = new DataView(arrayBuffer);
   let orientation;
 

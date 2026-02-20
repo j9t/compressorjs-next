@@ -9,7 +9,7 @@ import {
   isImageType,
   isPositiveNumber,
   normalizeDecimalNumber,
-  resetAndGetOrientation,
+  resetOrientation,
   getExif,
   insertExif,
   stripExif,
@@ -147,7 +147,7 @@ export default class Compressor {
       reader.onload = ({ target }) => {
         // Normalize EXIF orientation to 1 before extracting, since the browser
         // handles rotation natively via `image-orientation: from-image`
-        resetAndGetOrientation(target.result);
+        resetOrientation(target.result);
         this.exif = getExif(target.result);
         this.url = URL.createObjectURL(file);
         this.load({
