@@ -16,6 +16,7 @@ jobs:
           node-version: 'lts/*'
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
+      - run: npx playwright install --with-deps
       - run: npm run release
       - run: npm publish --provenance
         env:
