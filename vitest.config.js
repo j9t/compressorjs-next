@@ -9,6 +9,7 @@ export default defineConfig({
       headless: true,
       instances: [
         { browser: 'chromium' },
+        { browser: 'firefox' },
       ],
     },
     include: ['test/specs/**/*.spec.js'],

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { Compressor, loadImageAsBlob, compress, utilities, TEST_IMAGE, TEST_IMAGE_PNG } from '../setup.js';
+import { Compressor, loadImageAsBlob, compress, getImageDimensions, utilities, TEST_IMAGE, TEST_IMAGE_PNG } from '../setup.js';
 
 const { getExif, resetCanvasReliableCache } = utilities;
 
@@ -99,6 +99,14 @@ describe('behavior options', () => {
 
         expect(compressor.options.checkOrientation).toBe(true);
       });
+    });
+
+    it('should output correct orientation without checkOrientation (browser-native handling)', async () => {
+      const image = await loadImageAsBlob(TEST_IMAGE);
+      const { result } = await compress(image, { checkOrientation: false, strict: false });
+      const { width, height } = await getImageDimensions(result);
+
+      expect(width).toBeLessThan(height);
     });
   });
 
