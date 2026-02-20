@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { Compressor, loadImageAsBlob, compress, TEST_IMAGE, TEST_IMAGE_PNG } from '../setup.js';
 
+// WebKit (Safari) does not support WebP encoding via `canvas.toBlob()`
+// @@ Revisit when WebKit adds WebP encoding support
+const isWebKit = /AppleWebKit/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+
 describe('output options', () => {
   describe('mimeType', () => {
     it('should be `auto` by default', async () => {
@@ -10,7 +14,7 @@ describe('output options', () => {
       expect(compressor.options.mimeType).toBe('auto');
     });
 
-    it('should match the given MIME type', async () => {
+    it.skipIf(isWebKit)('should match the given MIME type', async () => {
       const image = await loadImageAsBlob(TEST_IMAGE);
       image.name = 'test.jpg';
 

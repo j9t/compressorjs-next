@@ -27,7 +27,10 @@ describe('behavior options', () => {
       const image = await loadImageAsBlob(TEST_IMAGE);
       const { result } = await compress(image, { quality: 1 });
 
-      expect(result).toBe(image);
+      // `strict` returns a file no larger than the original; since `retainExif`
+      // defaults to `false`, the strict fallback strips EXIF from the original
+      // rather than returning the identical object
+      expect(result.size).toBeLessThanOrEqual(image.size);
     });
 
     it('should be ignored when the `mimeType` option is set and its value is different from the MIME type of the image', async () => {

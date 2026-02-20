@@ -338,6 +338,37 @@ export default class Compressor {
             };
             reader.readAsArrayBuffer(blob);
           }
+        } else if (blob && isJPEGImage && !options.retainExif) {
+          // Strip any EXIF that may be present in the canvas output
+          // (most browsers strip it automatically, but WebKit preserves the
+          // source EXIF—this ensures consistent, privacy-safe output)
+          const next = (arrayBuffer) => {
+            if (this.aborted) return;
+            done(uint8ArrayToBlob(stripExif(arrayBuffer), options.mimeType));
+          };
+
+          if (blob.arrayBuffer) {
+            blob.arrayBuffer().then(next).catch(() => {
+              this.fail(new Error('Failed to read the compressed image with Blob.arrayBuffer().'));
+            });
+          } else {
+            const reader = new FileReader();
+
+            this.reader = reader;
+            reader.onload = ({ target }) => {
+              next(target.result);
+            };
+            reader.onabort = () => {
+              this.fail(new Error('Aborted to read the compressed image with FileReader.'));
+            };
+            reader.onerror = () => {
+              this.fail(new Error('Failed to read the compressed image with FileReader.'));
+            };
+            reader.onloadend = () => {
+              this.reader = null;
+            };
+            reader.readAsArrayBuffer(blob);
+          }
         } else {
           done(blob);
         }
@@ -356,6 +387,8 @@ export default class Compressor {
 
     this.revokeUrl();
 
+    let strictFallback = false;
+
     if (result) {
       // Returns original file if the result is greater than it and without size-related options
       if (
@@ -373,6 +406,7 @@ export default class Compressor {
         )
       ) {
         result = file;
+        strictFallback = true;
       } else {
         const date = new Date();
 
@@ -391,6 +425,34 @@ export default class Compressor {
       // Returns original file if the result is null in some cases
       console.warn('Compressor.js Next: Canvas produced no output—returning the original image');
       result = file;
+    }
+
+    // When strict returns the original file, it may still contain EXIF—strip it
+    // asynchronously so the output is consistently EXIF-free across all browsers
+    if (strictFallback && file.type === 'image/jpeg' && file.arrayBuffer) {
+      file.arrayBuffer().then((arrayBuffer) => {
+        if (this.aborted) return;
+
+        const stripped = uint8ArrayToBlob(stripExif(arrayBuffer), file.type);
+
+        stripped.name = file.name;
+        stripped.lastModified = file.lastModified;
+        this.result = stripped;
+
+        if (options.success) {
+          options.success.call(this, stripped);
+        }
+      }).catch(() => {
+        if (this.aborted) return;
+
+        this.result = file;
+
+        if (options.success) {
+          options.success.call(this, file);
+        }
+      });
+
+      return;
     }
 
     this.result = result;
