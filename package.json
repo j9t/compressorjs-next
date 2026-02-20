@@ -83,7 +83,7 @@
     "lint:css": "stylelint docs/**/*.css --fix",
     "lint:js": "eslint src test",
     "prepare": "husky",
-    "pretest": "playwright install chromium",
+    "pretest": "playwright install",
     "release": "npm run clean && npm run lint && npm run build && npm run compress && npm test",
     "start": "npm run dev",
     "test": "vitest run",
