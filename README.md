@@ -22,11 +22,12 @@ A JavaScript image compressor and converter. Uses the browser’s native [HTMLCa
 
 Change the package name from `compressorjs` to `compressorjs-next` in your `package.json` and imports (`import Compressor from 'compressorjs-next'`).
 
-The API is otherwise the same, with these exceptions (as of 1.1.0—follow [the changelog](https://github.com/j9t/compressorjs-next/blob/main/CHANGELOG.md) from there):
+The API is otherwise the same, with these exceptions (as of 2.0.0—follow [the changelog](https://github.com/j9t/compressorjs-next/blob/main/CHANGELOG.md) from there):
 
 * ESM is now the default module format (CommonJS is still supported)
-* The `noConflict()` method has been removed
+* The `checkOrientation` option has been removed, as all supported browsers now handle EXIF orientation natively
 * The default for `convertTypes` has changed from `['image/png']` to `[]`
+* The `noConflict()` method has been removed
 * Internet Explorer is no longer supported
 
 ## Main files
@@ -129,19 +130,6 @@ Indicates whether to output the original image instead of the compressed one whe
 * The `minHeight` option is set and its value is greater than the natural height of the image.
 * The `maxWidth` option is set and its value is less than the natural width of the image.
 * The `maxHeight` option is set and its value is less than the natural height of the image.
-
-### `checkOrientation`
-
-* Type: `boolean`
-* Default: `true`
-
-Indicates whether to read the image’s Exif Orientation value (JPEG image only), and then rotate or flip the image automatically with the value.
-
-**Notes:**
-
-* Don’t trust this all the time as some JPEG images have incorrect (not standard) `Orientation` values.
-* If the size of the target image is too large (e.g., greater than 10 MB), you should disable this option to avoid an out-of-memory crash.
-* The image’s Exif information will be removed after compressed, so if you need the Exif information, you may need to upload the original image as well.
 
 ### `retainExif`
 
