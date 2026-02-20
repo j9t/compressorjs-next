@@ -312,6 +312,7 @@ export default class Compressor {
 
         if (blob && isJPEGImage && options.retainExif && this.exif && this.exif.length > 0) {
           const next = (arrayBuffer) => {
+            if (this.aborted) return;
             const withExif = insertExif(arrayBuffer, this.exif);
             done(uint8ArrayToBlob(withExif, options.mimeType));
           };
@@ -442,8 +443,12 @@ export default class Compressor {
         if (options.success) {
           options.success.call(this, stripped);
         }
-      }).catch(() => {
+      }).catch((err) => {
         if (this.aborted) return;
+
+        console.warn(
+          `Compressor.js Next: Failed to strip EXIF from original file—returning original with EXIF intact${file.name ? ` [${file.name}]` : ''}${err?.message ? `: ${err.message}` : ''}`,
+        );
 
         this.result = file;
 
