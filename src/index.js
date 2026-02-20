@@ -9,9 +9,7 @@ import {
   isImageType,
   isPositiveNumber,
   normalizeDecimalNumber,
-  parseOrientation,
-  resetAndGetOrientation,
-  arrayBufferToDataURL,
+  resetOrientation,
   getExif,
   insertExif,
   stripExif,
@@ -69,7 +67,6 @@ export default class Compressor {
     }
 
     if (!ArrayBuffer) {
-      options.checkOrientation = false;
       options.retainExif = false;
     }
 
@@ -136,10 +133,9 @@ export default class Compressor {
     }
 
     const isJPEGImage = mimeType === 'image/jpeg';
-    const checkOrientation = isJPEGImage && options.checkOrientation;
     const retainExif = isJPEGImage && options.retainExif;
 
-    if (URL && !checkOrientation && !retainExif) {
+    if (!retainExif) {
       this.url = URL.createObjectURL(file);
       this.load({
         url: this.url,
@@ -149,41 +145,16 @@ export default class Compressor {
 
       this.reader = reader;
       reader.onload = ({ target }) => {
-        const { result } = target;
-        const data = {};
-        let orientation = 1;
+        if (this.aborted) return;
 
-        if (checkOrientation) {
-          // Reset the orientation value to its default value (1)
-          // as some iOS browsers will render image with its orientation
-          orientation = resetAndGetOrientation(result);
-
-          if (orientation > 1) {
-            Object.assign(data, parseOrientation(orientation));
-          }
-        }
-
-        if (retainExif) {
-          this.exif = getExif(result);
-        }
-
-        if (checkOrientation || retainExif) {
-          if (
-            !URL
-
-            // Generate a new URL with the default orientation value (1)
-            || orientation > 1
-          ) {
-            data.url = arrayBufferToDataURL(result, mimeType);
-          } else {
-            this.url = URL.createObjectURL(file);
-            data.url = this.url;
-          }
-        } else {
-          data.url = result;
-        }
-
-        this.load(data);
+        // Normalize EXIF orientation to 1 before extracting, since the browser
+        // handles rotation natively via `image-orientation: from-image`
+        resetOrientation(target.result);
+        this.exif = getExif(target.result);
+        this.url = URL.createObjectURL(file);
+        this.load({
+          url: this.url,
+        });
       };
       reader.onabort = () => {
         this.fail(new Error('Aborted to read the image with FileReader.'));
@@ -194,12 +165,7 @@ export default class Compressor {
       reader.onloadend = () => {
         this.reader = null;
       };
-
-      if (checkOrientation || retainExif) {
-        reader.readAsArrayBuffer(file);
-      } else {
-        reader.readAsDataURL(file);
-      }
+      reader.readAsArrayBuffer(file);
     }
   }
 
@@ -231,17 +197,10 @@ export default class Compressor {
     image.src = data.url;
   }
 
-  draw({
-    naturalWidth,
-    naturalHeight,
-    rotate = 0,
-    scaleX = 1,
-    scaleY = 1,
-  }) {
+  draw({ naturalWidth, naturalHeight }) {
     const { file, image, options } = this;
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    const is90DegreesRotated = Math.abs(rotate) % 180 === 90;
     const resizable = (options.resize === 'contain' || options.resize === 'cover') && isPositiveNumber(options.width) && isPositiveNumber(options.height);
     let maxWidth = Math.max(options.maxWidth, 0) || Infinity;
     let maxHeight = Math.max(options.maxHeight, 0) || Infinity;
@@ -249,12 +208,6 @@ export default class Compressor {
     let minHeight = Math.max(options.minHeight, 0) || 0;
     let aspectRatio = naturalWidth / naturalHeight;
     let { width, height } = options;
-
-    if (is90DegreesRotated) {
-      [maxWidth, maxHeight] = [maxHeight, maxWidth];
-      [minWidth, minHeight] = [minHeight, minWidth];
-      [width, height] = [height, width];
-    }
 
     if (resizable) {
       aspectRatio = width / height;
@@ -288,10 +241,6 @@ export default class Compressor {
     width = Math.floor(normalizeDecimalNumber(Math.min(Math.max(width, minWidth), maxWidth)));
     height = Math.floor(normalizeDecimalNumber(Math.min(Math.max(height, minHeight), maxHeight)));
 
-    const destX = -width / 2;
-    const destY = -height / 2;
-    const destWidth = width;
-    const destHeight = height;
     const params = [];
 
     if (resizable) {
@@ -309,11 +258,7 @@ export default class Compressor {
       params.push(srcX, srcY, srcWidth, srcHeight);
     }
 
-    params.push(destX, destY, destWidth, destHeight);
-
-    if (is90DegreesRotated) {
-      [width, height] = [height, width];
-    }
+    params.push(0, 0, width, height);
 
     canvas.width = width;
     canvas.height = height;
@@ -349,12 +294,7 @@ export default class Compressor {
       return;
     }
 
-    context.save();
-    context.translate(width / 2, height / 2);
-    context.rotate((rotate * Math.PI) / 180);
-    context.scale(scaleX, scaleY);
     context.drawImage(image, ...params);
-    context.restore();
 
     if (options.drew) {
       options.drew.call(this, context, canvas);
@@ -374,13 +314,47 @@ export default class Compressor {
 
         if (blob && isJPEGImage && options.retainExif && this.exif && this.exif.length > 0) {
           const next = (arrayBuffer) => {
+            if (this.aborted) return;
             const withExif = insertExif(arrayBuffer, this.exif);
             done(uint8ArrayToBlob(withExif, options.mimeType));
           };
 
           if (blob.arrayBuffer) {
             blob.arrayBuffer().then(next).catch(() => {
-              this.fail(new Error('Failed to read the compressed image with Blob.arrayBuffer().'));
+              if (this.aborted) return;
+              this.fail(new Error('Failed to read the compressed image with `Blob.arrayBuffer()`.'));
+            });
+          } else {
+            const reader = new FileReader();
+
+            this.reader = reader;
+            reader.onload = ({ target }) => {
+              next(target.result);
+            };
+            reader.onabort = () => {
+              this.fail(new Error('Aborted to read the compressed image with FileReader.'));
+            };
+            reader.onerror = () => {
+              this.fail(new Error('Failed to read the compressed image with FileReader.'));
+            };
+            reader.onloadend = () => {
+              this.reader = null;
+            };
+            reader.readAsArrayBuffer(blob);
+          }
+        } else if (blob && isJPEGImage && !options.retainExif) {
+          // Strip any EXIF that may be present in the canvas output
+          // (most browsers strip it automatically, but WebKit preserves the
+          // source EXIF—this ensures consistent, privacy-safe output)
+          const next = (arrayBuffer) => {
+            if (this.aborted) return;
+            done(uint8ArrayToBlob(stripExif(arrayBuffer), options.mimeType));
+          };
+
+          if (blob.arrayBuffer) {
+            blob.arrayBuffer().then(next).catch(() => {
+              if (this.aborted) return;
+              this.fail(new Error('Failed to read the compressed image with `Blob.arrayBuffer()`.'));
             });
           } else {
             const reader = new FileReader();
@@ -418,6 +392,8 @@ export default class Compressor {
 
     this.revokeUrl();
 
+    let strictFallback = false;
+
     if (result) {
       // Returns original file if the result is greater than it and without size-related options
       if (
@@ -435,6 +411,7 @@ export default class Compressor {
         )
       ) {
         result = file;
+        strictFallback = true;
       } else {
         const date = new Date();
 
@@ -453,6 +430,77 @@ export default class Compressor {
       // Returns original file if the result is null in some cases
       console.warn('Compressor.js Next: Canvas produced no output—returning the original image');
       result = file;
+    }
+
+    // When strict returns the original file, it may still contain EXIF—strip it
+    // asynchronously so the output is consistently EXIF-free across all browsers
+    if (strictFallback && file.type === 'image/jpeg') {
+      if (file.arrayBuffer) {
+        file.arrayBuffer().then((arrayBuffer) => {
+          if (this.aborted) return;
+
+          const stripped = uint8ArrayToBlob(stripExif(arrayBuffer), file.type);
+
+          stripped.name = file.name;
+          stripped.lastModified = file.lastModified;
+          this.result = stripped;
+
+          if (options.success) {
+            options.success.call(this, stripped);
+          }
+        }).catch((err) => {
+          if (this.aborted) return;
+
+          console.warn(
+            `Compressor.js Next: Failed to strip EXIF from original file—returning original with EXIF intact${file.name ? ` [${file.name}]` : ''}${err?.message ? `: ${err.message}` : ''}`,
+          );
+
+          this.result = file;
+
+          if (options.success) {
+            options.success.call(this, file);
+          }
+        });
+      } else {
+        const reader = new FileReader();
+
+        this.reader = reader;
+        reader.onload = ({ target }) => {
+          if (this.aborted) return;
+
+          const stripped = uint8ArrayToBlob(stripExif(target.result), file.type);
+
+          stripped.name = file.name;
+          stripped.lastModified = file.lastModified;
+          this.result = stripped;
+
+          if (options.success) {
+            options.success.call(this, stripped);
+          }
+        };
+        reader.onabort = () => {
+          this.fail(new Error('Aborted to read the original file with FileReader.'));
+        };
+        reader.onerror = () => {
+          if (this.aborted) return;
+
+          console.warn(
+            `Compressor.js Next: Failed to strip EXIF from original file—returning original with EXIF intact${file.name ? ` [${file.name}]` : ''}`,
+          );
+
+          this.result = file;
+
+          if (options.success) {
+            options.success.call(this, file);
+          }
+        };
+        reader.onloadend = () => {
+          this.reader = null;
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      return;
     }
 
     this.result = result;

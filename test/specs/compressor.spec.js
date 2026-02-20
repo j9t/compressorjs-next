@@ -33,6 +33,7 @@ describe('Compressor', () => {
 
     return new Promise((resolve) => {
       const compressor = new Compressor(image, {
+        retainExif: true,
         error(err) {
           expect(err.message).toBe('Failed to read the image with FileReader.');
           resolve();
@@ -49,7 +50,6 @@ describe('Compressor', () => {
 
     return new Promise((resolve) => {
       const compressor = new Compressor(image, {
-        checkOrientation: false,
         error(err) {
           expect(err.message).toBe('Failed to load the image.');
           resolve();

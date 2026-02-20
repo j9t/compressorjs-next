@@ -53,6 +53,7 @@ export default [
       globals: {
         window: 'readonly',
         document: 'readonly',
+        navigator: 'readonly',
         console: 'readonly',
         Image: 'readonly',
         FileReader: 'readonly',

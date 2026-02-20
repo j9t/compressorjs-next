@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { Compressor, loadImageAsBlob, compress, utilities, TEST_IMAGE, TEST_IMAGE_PNG } from '../setup.js';
+import { Compressor, loadImageAsBlob, compress, getImageDimensions, utilities, TEST_IMAGE, TEST_IMAGE_PNG } from '../setup.js';
 
 const { getExif, resetCanvasReliableCache } = utilities;
 
@@ -27,7 +27,10 @@ describe('behavior options', () => {
       const image = await loadImageAsBlob(TEST_IMAGE);
       const { result } = await compress(image, { quality: 1 });
 
-      expect(result).toBe(image);
+      // `strict` returns a file no larger than the original; since `retainExif`
+      // defaults to `false`, the strict fallback strips EXIF from the original
+      // rather than returning the identical object
+      expect(result.size).toBeLessThanOrEqual(image.size);
     });
 
     it('should be ignored when the `mimeType` option is set and its value is different from the MIME type of the image', async () => {
@@ -80,25 +83,13 @@ describe('behavior options', () => {
     });
   });
 
-  describe('checkOrientation', () => {
-    it('should check orientation by default', async () => {
+  describe('orientation', () => {
+    it('should output correct orientation using browser-native EXIF handling', async () => {
       const image = await loadImageAsBlob(TEST_IMAGE);
+      const { result } = await compress(image, { strict: false });
+      const { width, height } = await getImageDimensions(result);
 
-      return new Promise((resolve) => {
-        const compressor = new Compressor(image, {
-          success(result) {
-            const newImage = new Image();
-
-            newImage.onload = () => {
-              expect(newImage.naturalWidth).toBeLessThan(newImage.naturalHeight);
-              resolve();
-            };
-            newImage.src = URL.createObjectURL(result);
-          },
-        });
-
-        expect(compressor.options.checkOrientation).toBe(true);
-      });
+      expect(width).toBeLessThan(height);
     });
   });
 

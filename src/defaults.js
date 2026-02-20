@@ -7,13 +7,6 @@ export default {
   strict: true,
 
   /**
-   * Indicates if read the image’s Exif Orientation information,
-   * and then rotate or flip the image automatically.
-   * @type {boolean}
-   */
-  checkOrientation: true,
-
-  /**
    * Indicates if retain the image’s Exif information after compressed.
    * @type {boolean}
   */

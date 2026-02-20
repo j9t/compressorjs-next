@@ -10,7 +10,6 @@ const {
   arrayBufferToDataURL,
   normalizeDecimalNumber,
   getAdjustedSizes,
-  parseOrientation,
   getExif,
   insertExif,
   stripExif,
@@ -168,40 +167,6 @@ describe('utilities', () => {
     });
   });
 
-  describe('parseOrientation', () => {
-    it('should return default values for orientation 1', () => {
-      const result = parseOrientation(1);
-
-      expect(result.rotate).toBe(0);
-      expect(result.scaleX).toBe(1);
-      expect(result.scaleY).toBe(1);
-    });
-
-    it('should flip horizontal for orientation 2', () => {
-      const result = parseOrientation(2);
-
-      expect(result.scaleX).toBe(-1);
-    });
-
-    it('should rotate 180 for orientation 3', () => {
-      const result = parseOrientation(3);
-
-      expect(result.rotate).toBe(-180);
-    });
-
-    it('should rotate 90 for orientation 6', () => {
-      const result = parseOrientation(6);
-
-      expect(result.rotate).toBe(90);
-    });
-
-    it('should rotate -90 for orientation 8', () => {
-      const result = parseOrientation(8);
-
-      expect(result.rotate).toBe(-90);
-    });
-  });
-
   describe('getExif', () => {
     it('should return empty array for non-JPEG data', () => {
       const buffer = new Uint8Array([0x89, 0x50, 0x4E, 0x47]).buffer; // PNG signature
@@ -302,7 +267,7 @@ describe('utilities', () => {
 
     it('should return false when canvas throws', () => {
       CanvasRenderingContext2D.prototype.getImageData = function () {
-        throw new Error('SecurityError');
+        throw new Error('Security error.');
       };
 
       expect(isCanvasReliable()).toBe(false);

@@ -24,7 +24,7 @@ export function loadImageAsBlob(url) {
       blob.name = url.replace(/^.*?(\w+\.\w+)$/, '$1');
       resolve(blob);
     };
-    xhr.onerror = () => reject(new Error(`Failed to load ${url}`));
+    xhr.onerror = () => reject(new Error(`Failed to load ${url}.`));
     xhr.open('GET', url);
     xhr.responseType = 'blob';
     xhr.send();
@@ -69,7 +69,7 @@ export function getImageDimensions(blob) {
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(new Error('Failed to load image'));
+      reject(new Error('Failed to load image.'));
     };
     img.src = url;
   });

@@ -90,7 +90,7 @@ export function arrayBufferToDataURL(arrayBuffer, mimeType) {
  * @param {ArrayBuffer} arrayBuffer - The array buffer to read.
  * @returns {number} The read orientation value.
  */
-export function resetAndGetOrientation(arrayBuffer) {
+export function resetOrientation(arrayBuffer) {
   const dataView = new DataView(arrayBuffer);
   let orientation;
 
@@ -164,63 +164,6 @@ export function resetAndGetOrientation(arrayBuffer) {
   return orientation;
 }
 
-/**
- * Parse Exif Orientation value.
- * @param {number} orientation - The orientation to parse.
- * @returns {Object} The parsed result.
- */
-export function parseOrientation(orientation) {
-  let rotate = 0;
-  let scaleX = 1;
-  let scaleY = 1;
-
-  switch (orientation) {
-    // Flip horizontal
-    case 2:
-      scaleX = -1;
-      break;
-
-    // Rotate left 180°
-    case 3:
-      rotate = -180;
-      break;
-
-    // Flip vertical
-    case 4:
-      scaleY = -1;
-      break;
-
-    // Flip vertical and rotate right 90°
-    case 5:
-      rotate = 90;
-      scaleY = -1;
-      break;
-
-    // Rotate right 90°
-    case 6:
-      rotate = 90;
-      break;
-
-    // Flip horizontal and rotate right 90°
-    case 7:
-      rotate = 90;
-      scaleX = -1;
-      break;
-
-    // Rotate left 90°
-    case 8:
-      rotate = -90;
-      break;
-
-    default:
-  }
-
-  return {
-    rotate,
-    scaleX,
-    scaleY,
-  };
-}
 
 let cachedCanvasReliable;
 
