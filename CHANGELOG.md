@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [2.0.0] - 2026-02-20
 
+### Fixed
+
+* EXIF data is now consistently stripped across all browsers when `retainExif` is false—WebKit's canvas previously preserved the source EXIF in JPEG output
+
+### Changed
+
+* Expanded browser test matrix to include Firefox and WebKit (in addition to Chromium)
+
 ### Removed
 
 * Removed `checkOrientation` option—all modern browsers now apply EXIF orientation natively via `image-orientation: from-image` (including in `canvas.drawImage()`), making manual correction redundant
