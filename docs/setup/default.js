@@ -8,7 +8,6 @@ window.addEventListener('DOMContentLoaded', function () {
       return {
         options: {
           strict: true,
-          checkOrientation: true,
           retainExif: false,
           maxWidth: undefined,
           maxHeight: undefined,

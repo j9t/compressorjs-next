@@ -7,6 +7,7 @@ describe('abort', () => {
 
     return new Promise((resolve) => {
       const compressor = new Compressor(image, {
+        retainExif: true,
         success() {
           expect.fail('Should not succeed');
         },
@@ -25,7 +26,6 @@ describe('abort', () => {
 
     return new Promise((resolve) => {
       const compressor = new Compressor(image, {
-        checkOrientation: false,
         success() {
           expect.fail('Should not succeed');
         },
@@ -123,7 +123,6 @@ describe('abort', () => {
 
     return new Promise((resolve) => {
       const compressor = new Compressor(image, {
-        checkOrientation: false,
         error() {
           expect(compressor.url).toBeNull();
           resolve();
@@ -143,7 +142,6 @@ describe('abort', () => {
       let urlBeforeAbort;
 
       new Compressor(image, {
-        checkOrientation: false,
         beforeDraw() {
           urlBeforeAbort = this.url;
           this.abort();
@@ -162,7 +160,6 @@ describe('abort', () => {
 
     return new Promise((resolve) => {
       new Compressor(image, {
-        checkOrientation: false,
         success() {
           expect(this.url).toBeNull();
           resolve();

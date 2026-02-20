@@ -80,30 +80,10 @@ describe('behavior options', () => {
     });
   });
 
-  describe('checkOrientation', () => {
-    it('should check orientation by default', async () => {
+  describe('orientation', () => {
+    it('should output correct orientation using browser-native EXIF handling', async () => {
       const image = await loadImageAsBlob(TEST_IMAGE);
-
-      return new Promise((resolve) => {
-        const compressor = new Compressor(image, {
-          success(result) {
-            const newImage = new Image();
-
-            newImage.onload = () => {
-              expect(newImage.naturalWidth).toBeLessThan(newImage.naturalHeight);
-              resolve();
-            };
-            newImage.src = URL.createObjectURL(result);
-          },
-        });
-
-        expect(compressor.options.checkOrientation).toBe(true);
-      });
-    });
-
-    it('should output correct orientation without checkOrientation (browser-native handling)', async () => {
-      const image = await loadImageAsBlob(TEST_IMAGE);
-      const { result } = await compress(image, { checkOrientation: false, strict: false });
+      const { result } = await compress(image, { strict: false });
       const { width, height } = await getImageDimensions(result);
 
       expect(width).toBeLessThan(height);
