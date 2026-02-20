@@ -145,6 +145,8 @@ export default class Compressor {
 
       this.reader = reader;
       reader.onload = ({ target }) => {
+        if (this.aborted) return;
+
         // Normalize EXIF orientation to 1 before extracting, since the browser
         // handles rotation natively via `image-orientation: from-image`
         resetOrientation(target.result);
@@ -430,32 +432,71 @@ export default class Compressor {
 
     // When strict returns the original file, it may still contain EXIF—strip it
     // asynchronously so the output is consistently EXIF-free across all browsers
-    if (strictFallback && file.type === 'image/jpeg' && file.arrayBuffer) {
-      file.arrayBuffer().then((arrayBuffer) => {
-        if (this.aborted) return;
+    if (strictFallback && file.type === 'image/jpeg') {
+      if (file.arrayBuffer) {
+        file.arrayBuffer().then((arrayBuffer) => {
+          if (this.aborted) return;
 
-        const stripped = uint8ArrayToBlob(stripExif(arrayBuffer), file.type);
+          const stripped = uint8ArrayToBlob(stripExif(arrayBuffer), file.type);
 
-        stripped.name = file.name;
-        stripped.lastModified = file.lastModified;
-        this.result = stripped;
+          stripped.name = file.name;
+          stripped.lastModified = file.lastModified;
+          this.result = stripped;
 
-        if (options.success) {
-          options.success.call(this, stripped);
-        }
-      }).catch((err) => {
-        if (this.aborted) return;
+          if (options.success) {
+            options.success.call(this, stripped);
+          }
+        }).catch((err) => {
+          if (this.aborted) return;
 
-        console.warn(
-          `Compressor.js Next: Failed to strip EXIF from original file—returning original with EXIF intact${file.name ? ` [${file.name}]` : ''}${err?.message ? `: ${err.message}` : ''}`,
-        );
+          console.warn(
+            `Compressor.js Next: Failed to strip EXIF from original file—returning original with EXIF intact${file.name ? ` [${file.name}]` : ''}${err?.message ? `: ${err.message}` : ''}`,
+          );
 
-        this.result = file;
+          this.result = file;
 
-        if (options.success) {
-          options.success.call(this, file);
-        }
-      });
+          if (options.success) {
+            options.success.call(this, file);
+          }
+        });
+      } else {
+        const reader = new FileReader();
+
+        this.reader = reader;
+        reader.onload = ({ target }) => {
+          if (this.aborted) return;
+
+          const stripped = uint8ArrayToBlob(stripExif(target.result), file.type);
+
+          stripped.name = file.name;
+          stripped.lastModified = file.lastModified;
+          this.result = stripped;
+
+          if (options.success) {
+            options.success.call(this, stripped);
+          }
+        };
+        reader.onabort = () => {
+          this.fail(new Error('Aborted to read the original file with FileReader.'));
+        };
+        reader.onerror = () => {
+          if (this.aborted) return;
+
+          console.warn(
+            `Compressor.js Next: Failed to strip EXIF from original file—returning original with EXIF intact${file.name ? ` [${file.name}]` : ''}`,
+          );
+
+          this.result = file;
+
+          if (options.success) {
+            options.success.call(this, file);
+          }
+        };
+        reader.onloadend = () => {
+          this.reader = null;
+        };
+        reader.readAsArrayBuffer(file);
+      }
 
       return;
     }
