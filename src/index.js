@@ -83,21 +83,20 @@ export default class Compressor {
         reader.onload = ({ target }) => {
           if (this.aborted) return;
 
-          let result;
+          let blob;
 
           try {
-            const stripped = stripExif(target.result);
-
-            result = uint8ArrayToBlob(stripped, mimeType);
+            blob = uint8ArrayToBlob(stripExif(target.result), mimeType);
           } catch {
             this.fail(new Error('Failed to process the image data.'));
             return;
           }
 
           const date = new Date();
-
-          result.name = file.name;
-          result.lastModified = date.getTime();
+          const result = new File([blob], file.name || '', {
+            type: mimeType,
+            lastModified: date.getTime(),
+          });
 
           this.result = result;
 
@@ -414,17 +413,20 @@ export default class Compressor {
         strictFallback = true;
       } else {
         const date = new Date();
-
-        result.lastModified = date.getTime();
-        result.name = file.name;
+        let name = file.name || '';
 
         // Convert the extension to match its type
-        if (result.name && result.type !== file.type) {
-          result.name = result.name.replace(
+        if (name && result.type !== file.type) {
+          name = name.replace(
             REGEXP_EXTENSION,
             imageTypeToExtension(result.type),
           );
         }
+
+        result = new File([result], name, {
+          type: result.type,
+          lastModified: date.getTime(),
+        });
       }
     } else {
       // Returns original file if the result is null in some cases
@@ -439,10 +441,12 @@ export default class Compressor {
         file.arrayBuffer().then((arrayBuffer) => {
           if (this.aborted) return;
 
-          const stripped = uint8ArrayToBlob(stripExif(arrayBuffer), file.type);
+          const strippedBlob = uint8ArrayToBlob(stripExif(arrayBuffer), file.type);
+          const stripped = new File([strippedBlob], file.name || '', {
+            type: file.type,
+            lastModified: file.lastModified || Date.now(),
+          });
 
-          stripped.name = file.name;
-          stripped.lastModified = file.lastModified;
           this.result = stripped;
 
           if (options.success) {
@@ -468,10 +472,12 @@ export default class Compressor {
         reader.onload = ({ target }) => {
           if (this.aborted) return;
 
-          const stripped = uint8ArrayToBlob(stripExif(target.result), file.type);
+          const strippedBlob = uint8ArrayToBlob(stripExif(target.result), file.type);
+          const stripped = new File([strippedBlob], file.name || '', {
+            type: file.type,
+            lastModified: file.lastModified || Date.now(),
+          });
 
-          stripped.name = file.name;
-          stripped.lastModified = file.lastModified;
           this.result = stripped;
 
           if (options.success) {
