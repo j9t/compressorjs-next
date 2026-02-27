@@ -17,6 +17,7 @@ describe('callback options', () => {
         const compressor = new Compressor(image, {
           success(result) {
             expect(this).toBe(compressor);
+            expect(result).toBeInstanceOf(File);
             expect(result).toBeInstanceOf(Blob);
             expect(result.name).toBe(image.name);
             resolve();
