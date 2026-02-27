@@ -4,11 +4,17 @@ All notable changes to Compressor.js Next are documented in this file, which is 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2026-02-27
+
+### Fixed
+
+* Updated compressed result to be returned as a `File` object rather than a plain `Blob`, so `instanceof File` checks pass without manual conversion ([fengyuanchen/compressorjs#146](https://github.com/fengyuanchen/compressorjs/issues/146))
+
 ## [2.0.0] - 2026-02-20
 
 ### Fixed
 
-* EXIF data is now consistently stripped across all browsers when `retainExif` is false—WebKit's canvas previously preserved the source EXIF in JPEG output
+* Ensured EXIF data is consistently stripped across all browsers when `retainExif` is false—WebKit’s canvas previously preserved the source EXIF in JPEG output
 
 ### Changed
 
