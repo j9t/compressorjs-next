@@ -297,7 +297,7 @@ new Compressor(file, {
 * Type: `Function`
 * Default: `null`
 * Parameters:
-  - `result`: The compressed image (a `File` (**read only**) or `Blob` object).
+  - `result`: The compressed image (a [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) object, which is also a `Blob`).
 
 The hook function to execute when successful to compress the image.
 
