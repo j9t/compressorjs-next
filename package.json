@@ -4,9 +4,6 @@
     "url": "https://meiert.com/"
   },
   "browser": "dist/compressor.js",
-  "bugs": {
-    "url": "https://github.com/j9t/compressorjs-next/issues"
-  },
   "contributors": [
     {
       "name": "Chen Fengyuan",
