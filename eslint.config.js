@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import globals from 'globals';
 
 export default [
   {
@@ -10,19 +11,7 @@ export default [
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      globals: {
-        window: 'readonly',
-        document: 'readonly',
-        console: 'readonly',
-        Image: 'readonly',
-        FileReader: 'readonly',
-        ArrayBuffer: 'readonly',
-        URL: 'readonly',
-        Blob: 'readonly',
-        File: 'readonly',
-        HTMLCanvasElement: 'readonly',
-        CanvasRenderingContext2D: 'readonly',
-      },
+      globals: globals.browser,
     },
     rules: {
       'no-param-reassign': 'off',
@@ -35,10 +24,8 @@ export default [
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
+        ...globals.browser,
         window: 'writable',
-        Image: 'readonly',
-        URL: 'readonly',
-        XMLHttpRequest: 'readonly',
       },
     },
     rules: {
@@ -51,23 +38,10 @@ export default [
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
-        window: 'readonly',
-        document: 'readonly',
-        navigator: 'readonly',
-        console: 'readonly',
-        Image: 'readonly',
-        FileReader: 'readonly',
-        ArrayBuffer: 'readonly',
-        URL: 'readonly',
-        Blob: 'readonly',
-        File: 'readonly',
-        HTMLCanvasElement: 'readonly',
-        CanvasRenderingContext2D: 'readonly',
-        XMLHttpRequest: 'readonly',
+        ...globals.browser,
         describe: 'readonly',
         it: 'readonly',
         expect: 'readonly',
-        setTimeout: 'readonly',
         Compressor: 'readonly',
       },
     },
