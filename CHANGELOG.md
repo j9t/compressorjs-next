@@ -6,9 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [2.0.3] - 2026-04-08
 
+### Fixed
+
+* Resolved a race condition where `blob.arrayBuffer()` rejecting as a microtask (before a `setTimeout`-deferred `abort()` could set `this.aborted`) caused an unhandled promise rejection and a non-zero exit code in CI
+
 ### Changed
 
-* Pulled all dependencies up over missing notifications (special case as this is normally done on a regular basis, folded into other releases)
+* Pulled all dependencies up over missing notifications (special case as this is normally done on a regular basis, folded into regular releases)
 
 ## [2.0.2] - 2026-03-17
 
