@@ -98,11 +98,7 @@ export default class Compressor {
             lastModified: date.getTime(),
           });
 
-          this.result = result;
-
-          if (options.success) {
-            options.success.call(this, result);
-          }
+          this.succeed(result);
         };
         reader.onabort = () => {
           this.fail(new Error('Aborted to read the image with FileReader.'));
@@ -119,12 +115,7 @@ export default class Compressor {
         // Defer callback to match the normal async flow
         Promise.resolve().then(() => {
           if (this.aborted) return;
-
-          this.result = file;
-
-          if (options.success) {
-            options.success.call(this, file);
-          }
+          this.succeed(file);
         });
       }
 
@@ -399,11 +390,7 @@ export default class Compressor {
             lastModified: file.lastModified || Date.now(),
           });
 
-          this.result = stripped;
-
-          if (options.success) {
-            options.success.call(this, stripped);
-          }
+          this.succeed(stripped);
         }).catch((err) => {
           if (this.aborted) return;
 
@@ -411,11 +398,7 @@ export default class Compressor {
             `Compressor.js Next: Failed to strip EXIF from original file—returning original with EXIF intact${file.name ? ` [${file.name}]` : ''}${err?.message ? `: ${err.message}` : ''}`,
           );
 
-          this.result = file;
-
-          if (options.success) {
-            options.success.call(this, file);
-          }
+          this.succeed(file);
         });
       } else {
         const reader = new FileReader();
@@ -430,11 +413,7 @@ export default class Compressor {
             lastModified: file.lastModified || Date.now(),
           });
 
-          this.result = stripped;
-
-          if (options.success) {
-            options.success.call(this, stripped);
-          }
+          this.succeed(stripped);
         };
         reader.onabort = () => {
           this.fail(new Error('Aborted to read the original file with FileReader.'));
@@ -446,11 +425,7 @@ export default class Compressor {
             `Compressor.js Next: Failed to strip EXIF from original file—returning original with EXIF intact${file.name ? ` [${file.name}]` : ''}`,
           );
 
-          this.result = file;
-
-          if (options.success) {
-            options.success.call(this, file);
-          }
+          this.succeed(file);
         };
         reader.onloadend = () => {
           this.reader = null;
@@ -461,11 +436,7 @@ export default class Compressor {
       return;
     }
 
-    this.result = result;
-
-    if (options.success) {
-      options.success.call(this, result);
-    }
+    this.succeed(result);
   }
 
   readBlobAsArrayBuffer(blob, next) {
@@ -495,6 +466,14 @@ export default class Compressor {
         this.reader = null;
       };
       reader.readAsArrayBuffer(blob);
+    }
+  }
+
+  succeed(result) {
+    this.result = result;
+
+    if (this.options.success) {
+      this.options.success.call(this, result);
     }
   }
 
