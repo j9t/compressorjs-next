@@ -454,7 +454,11 @@ export default class Compressor {
 
       this.reader = reader;
       reader.onload = ({ target }) => {
-        next(target.result);
+        try {
+          next(target.result);
+        } catch (err) {
+          if (!this.aborted) this.fail(err);
+        }
       };
       reader.onabort = () => {
         this.fail(new Error('Aborted to read the compressed image with FileReader.'));
