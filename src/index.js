@@ -312,67 +312,19 @@ export default class Compressor {
         });
 
         if (blob && isJPEGImage && options.retainExif && this.exif && this.exif.length > 0) {
-          const next = (arrayBuffer) => {
+          this.readBlobAsArrayBuffer(blob, (arrayBuffer) => {
             if (this.aborted) return;
             const withExif = insertExif(arrayBuffer, this.exif);
             done(uint8ArrayToBlob(withExif, options.mimeType));
-          };
-
-          if (blob.arrayBuffer) {
-            blob.arrayBuffer().then(next).catch(() => {
-              if (this.aborted) return;
-              this.fail(new Error('Failed to read the compressed image with `Blob.arrayBuffer()`.'));
-            });
-          } else {
-            const reader = new FileReader();
-
-            this.reader = reader;
-            reader.onload = ({ target }) => {
-              next(target.result);
-            };
-            reader.onabort = () => {
-              this.fail(new Error('Aborted to read the compressed image with FileReader.'));
-            };
-            reader.onerror = () => {
-              this.fail(new Error('Failed to read the compressed image with FileReader.'));
-            };
-            reader.onloadend = () => {
-              this.reader = null;
-            };
-            reader.readAsArrayBuffer(blob);
-          }
+          });
         } else if (blob && isJPEGImage && !options.retainExif) {
           // Strip any EXIF that may be present in the canvas output
           // (most browsers strip it automatically, but WebKit preserves the
           // source EXIF—this ensures consistent, privacy-safe output)
-          const next = (arrayBuffer) => {
+          this.readBlobAsArrayBuffer(blob, (arrayBuffer) => {
             if (this.aborted) return;
             done(uint8ArrayToBlob(stripExif(arrayBuffer), options.mimeType));
-          };
-
-          if (blob.arrayBuffer) {
-            blob.arrayBuffer().then(next).catch(() => {
-              if (this.aborted) return;
-              this.fail(new Error('Failed to read the compressed image with `Blob.arrayBuffer()`.'));
-            });
-          } else {
-            const reader = new FileReader();
-
-            this.reader = reader;
-            reader.onload = ({ target }) => {
-              next(target.result);
-            };
-            reader.onabort = () => {
-              this.fail(new Error('Aborted to read the compressed image with FileReader.'));
-            };
-            reader.onerror = () => {
-              this.fail(new Error('Failed to read the compressed image with FileReader.'));
-            };
-            reader.onloadend = () => {
-              this.reader = null;
-            };
-            reader.readAsArrayBuffer(blob);
-          }
+          });
         } else {
           done(blob);
         }
@@ -513,6 +465,36 @@ export default class Compressor {
 
     if (options.success) {
       options.success.call(this, result);
+    }
+  }
+
+  readBlobAsArrayBuffer(blob, next) {
+    if (blob.arrayBuffer) {
+      blob.arrayBuffer().then(next).catch(() => {
+        // Defer to a macrotask so any `abort()` scheduled via `setTimeout()`
+        // in a `drew()` hook has a chance to set `this.aborted` first
+        setTimeout(() => {
+          if (this.aborted) return;
+          this.fail(new Error('Failed to read the compressed image with `Blob.arrayBuffer()`.'));
+        }, 0);
+      });
+    } else {
+      const reader = new FileReader();
+
+      this.reader = reader;
+      reader.onload = ({ target }) => {
+        next(target.result);
+      };
+      reader.onabort = () => {
+        this.fail(new Error('Aborted to read the compressed image with FileReader.'));
+      };
+      reader.onerror = () => {
+        this.fail(new Error('Failed to read the compressed image with FileReader.'));
+      };
+      reader.onloadend = () => {
+        this.reader = null;
+      };
+      reader.readAsArrayBuffer(blob);
     }
   }
 
