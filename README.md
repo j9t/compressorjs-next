@@ -328,3 +328,11 @@ compressor.abort();
 Supports [browserslist `defaults`](https://browsersl.ist/#q=defaults).
 
 **Note:** When the browser’s canvas produces unreliable pixel data—as with Firefox’s `privacy.resistFingerprinting` setting or privacy-focused forks like LibreWolf—, compression, resizing, and format conversion are not possible. In this case, the library falls back to returning the original image with EXIF data stripped (JPEG) or unchanged (other formats).
+
+***
+
+You might like some of my other work:
+
+* Optimization tools: [HTML Minifier Next](https://github.com/j9t/html-minifier-next) · [ObsoHTML](https://github.com/j9t/obsohtml) · [Image Guard](https://github.com/j9t/image-guard) · [.htaccess Punk](https://github.com/j9t/htaccess-punk)
+* Defense tools: [IA Defensa](https://iadefensa.com/solutions/)
+* Resources for quality web development: [Articles](https://meiert.com/topics/development/) · [Books](https://meiert.com/topics/books/) (recommended: [_On Web Development II_](https://meiert.com/blog/on-web-development-2/)) · [News](https://frontenddogma.com/) · [Terminology](https://webglossary.info/)
