@@ -20,7 +20,7 @@ A JavaScript image compressor and converter. Uses the browser’s native [HTMLCa
 
 ## Migrating from Compressor.js
 
-Change the package name from `compressorjs` to `compressorjs-next` in your `package.json` and imports (`import Compressor from 'compressorjs-next'`).
+Change the package name from `compressorjs` to `compressorjs-next` in your package.json and imports (`import Compressor from 'compressorjs-next'`).
 
 The API is otherwise the same, with these exceptions (as of 2.0.0—follow [the changelog](https://github.com/j9t/compressorjs-next/blob/main/CHANGELOG.md) from there):
 
