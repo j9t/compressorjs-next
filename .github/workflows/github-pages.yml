@@ -32,7 +32,7 @@ jobs:
       - name: "Copy build to docs"
         run: cp dist/compressor.js docs/setup/
       - name: "Upload build artifact"
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: docs
   deploy:
