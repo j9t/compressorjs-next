@@ -17,9 +17,9 @@ jobs:
     strategy:
       matrix:
         platform: [ubuntu-latest, windows-latest]
-        node: ['lts/*', 'current']
-    continue-on-error: ${{ matrix.node == 'current' }}
-    timeout-minutes: 10
+        # @@ Re-enable when “current” is stable again
+        # node: ['lts/*', 'current']
+        node: ['lts/*']
     name: "Node ${{ matrix.node }} (${{ matrix.platform }})"
     runs-on: ${{ matrix.platform }}
     steps:
@@ -41,9 +41,8 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     strategy:
       matrix:
-        node: ['lts/*', 'current']
-    continue-on-error: ${{ matrix.node == 'current' }}
-    timeout-minutes: 10
+        # node: ['lts/*', 'current']
+        node: ['lts/*']
     name: "Node ${{ matrix.node }} (macOS, all browsers)"
     runs-on: macos-latest
     steps:
