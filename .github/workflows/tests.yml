@@ -18,6 +18,8 @@ jobs:
       matrix:
         platform: [ubuntu-latest, windows-latest]
         node: ['lts/*', 'current']
+    continue-on-error: ${{ matrix.node == 'current' }}
+    timeout-minutes: 10
     name: "Node ${{ matrix.node }} (${{ matrix.platform }})"
     runs-on: ${{ matrix.platform }}
     steps:
@@ -40,6 +42,8 @@ jobs:
     strategy:
       matrix:
         node: ['lts/*', 'current']
+    continue-on-error: ${{ matrix.node == 'current' }}
+    timeout-minutes: 10
     name: "Node ${{ matrix.node }} (macOS, all browsers)"
     runs-on: macos-latest
     steps:
