@@ -14,9 +14,6 @@ A JavaScript image compressor and converter. Uses the browser’s native [HTMLCa
 * [Options](#options)
 * [Methods](#methods)
 * [Browser support](#browser-support)
-* [Contributing](#contributing)
-* [Versioning](#versioning)
-* [License](#license)
 
 ## Migrating from Compressor.js
 
@@ -45,7 +42,7 @@ dist/
 ### Install
 
 ```shell
-npm i compressorjs-next
+npm i -D compressorjs-next
 ```
 
 ### Usage
@@ -112,8 +109,7 @@ document.getElementById('file').addEventListener('change', (e) => {
 
 ## Options
 
-You may set compressor options with `new Compressor(file, options)`.
-If you want to change the global default options, You may use `Compressor.setDefaults(options)`.
+You may set compressor options with `new Compressor(file, options)`. If you want to change the global default options, you may use `Compressor.setDefaults(options)`.
 
 ### `strict`
 
@@ -260,7 +256,7 @@ Files whose file type is included in the `convertTypes` list and whose file size
   - `context`: The 2d rendering context of the canvas.
   - `canvas`: The canvas for compression.
 
-The hook function to execute before drawing the image into the canvas for compression.
+The hook function executes before drawing the image into the canvas for compression.
 
 ```js
 new Compressor(file, {
@@ -280,7 +276,7 @@ new Compressor(file, {
   - `context`: The 2d rendering context of the canvas.
   - `canvas`: The canvas for compression.
 
-The hook function to execute after drawing the image into the canvas for compression.
+The hook function executes after drawing the image into the canvas for compression.
 
 ```js
 new Compressor(file, {
@@ -299,7 +295,7 @@ new Compressor(file, {
 * Parameters:
   - `result`: The compressed image (a [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) object, which is also a `Blob`).
 
-The hook function to execute when successful to compress the image.
+The hook function executes when it succeeds to compress the image.
 
 ### `error(err)`
 
@@ -308,7 +304,7 @@ The hook function to execute when successful to compress the image.
 * Parameters:
   - `err`: The compression error (an `Error` object).
 
-The hook function executes when fails to compress the image.
+The hook function executes when it fails to compress the image.
 
 ## Methods
 
