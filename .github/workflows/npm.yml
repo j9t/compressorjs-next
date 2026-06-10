@@ -16,6 +16,7 @@ jobs:
           node-version-file: ".nvmrc"
           registry-url: "https://registry.npmjs.org"
       - run: npm ci
+      - run: npm test
       - run: npx playwright install --with-deps
       - run: npm run release
       - run: npm publish --provenance
