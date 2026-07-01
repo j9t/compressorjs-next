@@ -8,6 +8,22 @@ updates:
       interval: "monthly"
     cooldown:
       default-days: 7
+    groups:
+      babel:
+        patterns:
+          - "@babel/*"
+      eslint:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
+      stylelint:
+        patterns:
+          - "stylelint"
+          - "stylelint-*"
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
