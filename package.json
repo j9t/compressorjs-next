@@ -12,8 +12,8 @@
   ],
   "description": "JavaScript image compressor and converter",
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@babel/preset-env": "^7.29.7",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
     "@eslint/js": "^10.0.1",
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-commonjs": "^29.0.3",
@@ -68,6 +68,11 @@
   "license": "MIT",
   "main": "dist/compressor.esm.js",
   "name": "compressorjs-next",
+  "overrides": {
+    "@rollup/plugin-babel": {
+      "@babel/core": "$@babel/core"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/j9t/compressorjs-next.git"
