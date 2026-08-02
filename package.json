@@ -18,19 +18,19 @@
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-commonjs": "^29.0.3",
     "@rollup/plugin-node-resolve": "^16.0.3",
-    "@vitest/browser-playwright": "^4.1.9",
-    "@vitest/coverage-istanbul": "^4.1.9",
+    "@vitest/browser-playwright": "^4.1.10",
+    "@vitest/coverage-istanbul": "^4.1.10",
     "del-cli": "^7.0.0",
     "eslint": "^10.8.0",
-    "globals": "^17.7.0",
+    "globals": "^17.9.0",
     "husky": "^9.1.7",
     "playwright": "^1.62.1",
-    "rollup": "^4.62.2",
+    "rollup": "^4.62.4",
     "stylelint": "^17.14.1",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-order": "^8.1.1",
-    "terser": "^5.48.0",
-    "vitest": "^4.1.9"
+    "terser": "^5.49.0",
+    "vitest": "^4.1.10"
   },
   "exports": {
     ".": {
@@ -98,5 +98,5 @@
   "sideEffects": false,
   "type": "module",
   "types": "types/index.d.ts",
-  "version": "2.0.4"
+  "version": "2.0.5"
 }
