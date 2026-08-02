@@ -1,6 +1,6 @@
 # Compressor.js Next
 
-[![npm version](https://img.shields.io/npm/v/compressorjs-next.svg)](https://www.npmjs.com/package/compressorjs-next) [![Build status](https://github.com/j9t/compressorjs-next/workflows/Tests/badge.svg)](https://github.com/j9t/compressorjs-next/actions) [![Socket](https://badge.socket.dev/npm/package/compressorjs-next)](https://socket.dev/npm/package/compressorjs-next) [![GitHub Sponsors](https://badgen.net/static/Support/Open%20Source/cyan)](https://github.com/j9t/compressorjs-next?sponsor=1)
+[![npm version](https://img.shields.io/npm/v/compressorjs-next.svg)](https://www.npmjs.com/package/compressorjs-next) [![Build status](https://github.com/j9t/compressorjs-next/workflows/Tests/badge.svg)](https://github.com/j9t/compressorjs-next/actions) [![Socket](https://badge.socket.dev/npm/package/compressorjs-next)](https://socket.dev/npm/package/compressorjs-next) [![GitHub Sponsors](https://badgen.net/static/Support/Open%20Source/cyan)](https://github.com/sponsors/j9t)
 
 Modernized, optimized, and maintained fork of [Fengyuan Chen’s Compressor.js](https://github.com/fengyuanchen/compressorjs).
 
