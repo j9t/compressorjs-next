@@ -10,7 +10,7 @@ export const TEST_IMAGE = '/docs/media/test.jpg';
 export const TEST_IMAGE_PNG = '/docs/media/test.png';
 
 /**
- * Load an image as a Blob for testing
+ * Load an image as a Blob for testing.
  * @param {string} url - The image URL
  * @returns {Promise<Blob>} The image as a Blob
  */
