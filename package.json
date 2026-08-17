@@ -29,7 +29,7 @@
     "stylelint": "^17.14.1",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-order": "^8.1.1",
-    "terser": "^5.49.0",
+    "terser": "^5.50.0",
     "vitest": "^4.1.10"
   },
   "exports": {
