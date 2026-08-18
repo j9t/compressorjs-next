@@ -4,6 +4,12 @@ All notable changes to Compressor.js Next are documented in this file, which is 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.6] - 2026-08-18
+
+### Changed
+
+* Forced update with the latest dependencies
+
 ## [2.0.5] - 2026-08-02
 
 ### Changed
