@@ -13,12 +13,17 @@ export default defineConfig({
         { browser: 'webkit' },
       ],
     },
-    include: ['test/specs/**/*.spec.js'],
-    globals: true,
+    include: ['test/browser/**/*.test.js'],
     coverage: {
       provider: 'istanbul',
       reporter: ['text', 'html', 'lcov'],
       include: ['src/**/*.js'],
+      thresholds: {
+        statements: 90,
+        branches: 85,
+        functions: 88,
+        lines: 92,
+      },
     },
   },
 });

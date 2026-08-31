@@ -1,6 +1,8 @@
-__screenshots__
+.vitest-attachments/
+__screenshots__/
 coverage/
 dist/
-docs/setup/compressor.js
+docs/setup/compressor.esm.js
 node_modules/
 *.map
+.DS_Store

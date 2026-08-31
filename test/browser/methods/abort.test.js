@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Compressor, loadImageAsBlob, TEST_IMAGE } from '../../setup.js';
+import { Compressor, loadImageAsBlob, TEST_IMAGE } from '../helpers.js';
 
 describe('abort', () => {
   it('should abort the compressing process before read', async () => {

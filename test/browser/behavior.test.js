@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { Compressor, loadImageAsBlob, compress, getImageDimensions, utilities, TEST_IMAGE, TEST_IMAGE_PNG } from '../setup.js';
+import { Compressor, loadImageAsBlob, compress, getImageDimensions, utilities, TEST_IMAGE, TEST_IMAGE_PNG } from './helpers.js';
 
 const { getExif, resetCanvasReliableCache } = utilities;
 

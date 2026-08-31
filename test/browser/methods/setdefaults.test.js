@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Compressor, loadImageAsBlob, TEST_IMAGE_PNG } from '../../setup.js';
+import { Compressor, loadImageAsBlob, TEST_IMAGE_PNG } from '../helpers.js';
 
 describe('setDefaults', () => {
   it('should be a static method', () => {

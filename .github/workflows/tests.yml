@@ -19,9 +19,7 @@ jobs:
     strategy:
       matrix:
         platform: [ubuntu-latest, windows-latest]
-        # @@ Re-enable when “current” is stable again
-        # node: ["lts/*", "current"]
-        node: ["lts/*"]
+        node: ["lts/*", "current"]
     name: "Node ${{ matrix.node }} (${{ matrix.platform }})"
     runs-on: ${{ matrix.platform }}
     steps:
@@ -38,17 +36,19 @@ jobs:
         # Lint results don’t vary by platform or Node version
         if: matrix.platform == 'ubuntu-latest' && matrix.node == 'lts/*'
         run: npm run lint
-      - name: "Build"
-        run: npm run build
       - name: "Test"
+        # Types, browser suite, package entry points, and publishing correctness
         run: npm test
+      - name: "Coverage"
+        # Thresholds are enforced here; the numbers don’t vary by platform
+        if: matrix.platform == 'ubuntu-latest' && matrix.node == 'lts/*'
+        run: npm run test:coverage
 
   test-macos:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     strategy:
       matrix:
-        # node: ["lts/*", "current"]
-        node: ["lts/*"]
+        node: ["lts/*", "current"]
     name: "Node ${{ matrix.node }} (macOS, all browsers)"
     runs-on: macos-latest
     steps:
@@ -62,4 +62,4 @@ jobs:
       - name: "Install dependencies"
         run: npm ci
       - name: "Test (full browser matrix)"
-        run: npm run test:full
+        run: npm run test:browser:all

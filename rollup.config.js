@@ -22,26 +22,15 @@ export default {
   output: [
     {
       banner,
-      name,
-      file: `dist/${fileName}.js`,
-      format: 'umd',
-    },
-    {
-      banner,
-      file: `dist/${fileName}.common.js`,
-      format: 'cjs',
-      exports: 'auto',
-    },
-    {
-      banner,
       file: `dist/${fileName}.esm.js`,
       format: 'esm',
+      sourcemap: true,
     },
     {
       banner,
-      name,
-      file: `docs/setup/${fileName}.js`,
-      format: 'umd',
+      file: `docs/setup/${fileName}.esm.js`,
+      format: 'esm',
+      sourcemap: true,
     },
   ],
   plugins: [

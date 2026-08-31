@@ -1,5 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { utilities, loadImageAsBlob, TEST_IMAGE, TEST_IMAGE_PNG } from '../setup.js';
+import {
+  utilities,
+  loadImageAsBlob,
+  TEST_IMAGE,
+  TEST_IMAGE_PNG,
+  buildJpeg,
+  jpegSegment,
+  exifPayload,
+  xmpPayload,
+  readOrientation,
+} from './helpers.js';
 
 const {
   isPositiveNumber,
@@ -7,7 +17,7 @@ const {
   imageTypeToExtension,
   isCanvasReliable,
   resetCanvasReliableCache,
-  arrayBufferToDataURL,
+  resetOrientation,
   normalizeDecimalNumber,
   getAdjustedSizes,
   getExif,
@@ -84,34 +94,74 @@ describe('utilities', () => {
     });
   });
 
-  describe('arrayBufferToDataURL', () => {
-    it('should convert empty buffer', () => {
-      const buffer = new ArrayBuffer(0);
-      const result = arrayBufferToDataURL(buffer, 'image/png');
+  describe('resetOrientation', () => {
+    it('should return undefined for non-JPEG data', () => {
+      const buffer = new Uint8Array([0x89, 0x50, 0x4E, 0x47]).buffer; // PNG signature
 
-      expect(result).toBe('data:image/png;base64,');
+      expect(resetOrientation(buffer)).toBeUndefined();
     });
 
-    it('should convert small buffer correctly', () => {
-      const buffer = new Uint8Array([72, 101, 108, 108, 111]).buffer; // "Hello"
-      const result = arrayBufferToDataURL(buffer, 'text/plain');
+    it('should return the original orientation and reset it to 1', () => {
+      const buffer = buildJpeg([jpegSegment(0xE1, exifPayload(6))]);
 
-      expect(result).toBe('data:text/plain;base64,SGVsbG8=');
+      expect(resetOrientation(buffer)).toBe(6);
+      expect(readOrientation(getExif(buffer))).toBe(1);
     });
 
-    it('should handle buffer larger than chunk size', () => {
-      // Create a buffer larger than 8192 bytes
-      const size = 10000;
-      const buffer = new Uint8Array(size);
+    it('should reset the orientation when an XMP APP1 segment comes first', () => {
+      const buffer = buildJpeg([
+        jpegSegment(0xE1, xmpPayload()),
+        jpegSegment(0xE1, exifPayload(6)),
+      ]);
 
-      for (let i = 0; i < size; i += 1) {
-        buffer[i] = i % 256;
-      }
+      expect(resetOrientation(buffer)).toBe(6);
+      expect(readOrientation(getExif(buffer))).toBe(1);
+    });
 
-      const result = arrayBufferToDataURL(buffer.buffer, 'application/octet-stream');
+    it('should reset the orientation when an earlier segment’s payload contains FF E1', () => {
+      const buffer = buildJpeg([
+        jpegSegment(0xE2, [0x49, 0x43, 0x43, 0x00, 0xFF, 0xE1, 0x00, 0x20]),
+        jpegSegment(0xE1, exifPayload(6)),
+      ]);
 
-      expect(typeof result).toBe('string');
-      expect(result.startsWith('data:application/octet-stream;base64,')).toBe(true);
+      expect(resetOrientation(buffer)).toBe(6);
+      expect(readOrientation(getExif(buffer))).toBe(1);
+    });
+
+    it('should reset the orientation when `0xFF` fill bytes precede the marker', () => {
+      const buffer = buildJpeg([
+        Uint8Array.from([0xFF, 0xFF]),
+        jpegSegment(0xE1, exifPayload(6)),
+      ]);
+
+      expect(resetOrientation(buffer)).toBe(6);
+      expect(readOrientation(getExif(buffer))).toBe(1);
+    });
+
+    it('should reset the orientation past a standalone marker carrying no length', () => {
+      const buffer = buildJpeg([
+        Uint8Array.from([0xFF, 0x01]), // TEM
+        jpegSegment(0xE1, exifPayload(6)),
+      ]);
+
+      expect(resetOrientation(buffer)).toBe(6);
+      expect(readOrientation(getExif(buffer))).toBe(1);
+    });
+
+    it('should return undefined for a JPEG without EXIF', () => {
+      const buffer = buildJpeg([jpegSegment(0xE0, [0x4A, 0x46, 0x49, 0x46, 0x00])]);
+
+      expect(resetOrientation(buffer)).toBeUndefined();
+    });
+
+    it('should not mistake FF E1 in the scan data for an EXIF segment', () => {
+      const buffer = buildJpeg([jpegSegment(0xE0, [0x4A, 0x46, 0x49, 0x46, 0x00])]);
+      const uint8 = new Uint8Array(buffer);
+
+      uint8[uint8.length - 4] = 0xFF;
+      uint8[uint8.length - 3] = 0xE1;
+
+      expect(resetOrientation(buffer)).toBeUndefined();
     });
   });
 
@@ -174,6 +224,13 @@ describe('utilities', () => {
 
       expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBe(0);
+    });
+
+    it('should not read past a truncated JPEG ending in fill bytes', () => {
+      const buffer = Uint8Array.from([0xFF, 0xD8, 0xFF, 0xFF, 0xFF, 0xFF]).buffer;
+
+      expect(() => getExif(buffer)).not.toThrow();
+      expect(getExif(buffer)).toEqual([]);
     });
 
     it('should return empty array for JPEG without EXIF', async () => {
@@ -275,6 +332,12 @@ describe('utilities', () => {
   });
 
   describe('stripExif', () => {
+    it('should not read past a truncated JPEG ending in fill bytes', () => {
+      const buffer = Uint8Array.from([0xFF, 0xD8, 0xFF, 0xFF, 0xFF, 0xFF]).buffer;
+
+      expect(() => stripExif(buffer)).not.toThrow();
+    });
+
     it('should return data unchanged for non-JPEG input', () => {
       const buffer = new Uint8Array([0x89, 0x50, 0x4E, 0x47]).buffer; // PNG signature
       const result = stripExif(buffer);
