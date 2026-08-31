@@ -368,7 +368,7 @@ export default class Compressor {
           strippedBlob,
           file.name || '',
           file.type,
-          file.lastModified || Date.now(),
+          file.lastModified ?? Date.now(),
         ));
       };
       const succeedOriginal = (err) => {

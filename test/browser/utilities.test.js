@@ -128,6 +128,26 @@ describe('utilities', () => {
       expect(readOrientation(getExif(buffer))).toBe(1);
     });
 
+    it('should reset the orientation when `0xFF` fill bytes precede the marker', () => {
+      const buffer = buildJpeg([
+        Uint8Array.from([0xFF, 0xFF]),
+        jpegSegment(0xE1, exifPayload(6)),
+      ]);
+
+      expect(resetOrientation(buffer)).toBe(6);
+      expect(readOrientation(getExif(buffer))).toBe(1);
+    });
+
+    it('should reset the orientation past a standalone marker carrying no length', () => {
+      const buffer = buildJpeg([
+        Uint8Array.from([0xFF, 0x01]), // TEM
+        jpegSegment(0xE1, exifPayload(6)),
+      ]);
+
+      expect(resetOrientation(buffer)).toBe(6);
+      expect(readOrientation(getExif(buffer))).toBe(1);
+    });
+
     it('should return undefined for a JPEG without EXIF', () => {
       const buffer = buildJpeg([jpegSegment(0xE0, [0x4A, 0x46, 0x49, 0x46, 0x00])]);
 

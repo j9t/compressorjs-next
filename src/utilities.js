@@ -85,23 +85,40 @@ function forEachSegment(dataView, callback) {
       break;
     }
 
-    const type = dataView.getUint8(start + 1);
+    // Any marker may be preceded by any number of 0xFF fill bytes
+    let marker = start;
+
+    while (marker + 1 < byteLength && dataView.getUint8(marker + 1) === 0xFF) {
+      marker += 1;
+    }
+
+    const type = dataView.getUint8(marker + 1);
 
     // SOS (Start of Scan)—the rest is image data
     if (type === 0xDA) {
-      callback(type, start, byteLength);
+      callback(type, marker, byteLength);
       break;
     }
 
-    const segmentLength = dataView.getUint16(start + 2);
+    // TEM and RST0–RST7, SOI, and EOI stand alone, carrying no segment length
+    if (type === 0x01 || (type >= 0xD0 && type <= 0xD9)) {
+      start = marker + 2;
+      continue;
+    }
+
+    if (marker + 3 >= byteLength) {
+      break;
+    }
+
+    const segmentLength = dataView.getUint16(marker + 2);
 
     if (segmentLength < 2) {
       break;
     }
 
-    const end = start + 2 + segmentLength;
+    const end = marker + 2 + segmentLength;
 
-    if (end > byteLength || callback(type, start, end) === false) {
+    if (end > byteLength || callback(type, marker, end) === false) {
       break;
     }
 

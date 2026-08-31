@@ -9,8 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 
 * Fixed EXIF orientation not being reset when the Exif APP1 segment was not the first `FF E1` sequence in the file (as when a photo also carries an XMP packet), which left `retainExif: true` output rotated twice
-* Corrected relative imports in the published `src/` to carry `.js` extensions, so the sources resolve under Node’s ESM loader
+* Fixed EXIF handling on JPEGs whose markers are preceded by `0xFF` fill bytes, or that carry a standalone marker with no segment length, both of which the format permits
+* Fixed a `lastModified` timestamp of `0` being replaced with the current time when stripping EXIF from an original file
 * Fixed the type declarations leaking `Compressor` and `Compressor.Options` into the global scope of every project importing the package
+* Corrected relative imports in the published src/ to carry `.js` extensions, so the sources resolve under Node’s ESM loader
 
 ### Added
 
