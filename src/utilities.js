@@ -92,6 +92,11 @@ function forEachSegment(dataView, callback) {
       marker += 1;
     }
 
+    // Trailing fill bytes leave no marker to read
+    if (marker + 1 >= byteLength) {
+      break;
+    }
+
     const type = dataView.getUint8(marker + 1);
 
     // SOS (Start of Scan)—the rest is image data

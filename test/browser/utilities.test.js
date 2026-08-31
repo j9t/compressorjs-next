@@ -226,6 +226,13 @@ describe('utilities', () => {
       expect(result.length).toBe(0);
     });
 
+    it('should not read past a truncated JPEG ending in fill bytes', () => {
+      const buffer = Uint8Array.from([0xFF, 0xD8, 0xFF, 0xFF, 0xFF, 0xFF]).buffer;
+
+      expect(() => getExif(buffer)).not.toThrow();
+      expect(getExif(buffer)).toEqual([]);
+    });
+
     it('should return empty array for JPEG without EXIF', async () => {
       const blob = await loadImageAsBlob(TEST_IMAGE_PNG);
       const arrayBuffer = await blob.arrayBuffer();
@@ -325,6 +332,12 @@ describe('utilities', () => {
   });
 
   describe('stripExif', () => {
+    it('should not read past a truncated JPEG ending in fill bytes', () => {
+      const buffer = Uint8Array.from([0xFF, 0xD8, 0xFF, 0xFF, 0xFF, 0xFF]).buffer;
+
+      expect(() => stripExif(buffer)).not.toThrow();
+    });
+
     it('should return data unchanged for non-JPEG input', () => {
       const buffer = new Uint8Array([0x89, 0x50, 0x4E, 0x47]).buffer; // PNG signature
       const result = stripExif(buffer);
