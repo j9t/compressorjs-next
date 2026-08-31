@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Compressor, loadImageAsBlob, TEST_IMAGE } from '../setup.js';
+import { Compressor, loadImageAsBlob, TEST_IMAGE } from './helpers.js';
 
 describe('Compressor', () => {
   it('should be a class (function)', () => {

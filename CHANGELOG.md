@@ -4,6 +4,25 @@ All notable changes to Compressor.js Next are documented in this file, which is 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-08-31
+
+### Fixed
+
+* Fixed EXIF orientation not being reset when the Exif APP1 segment was not the first `FF E1` sequence in the file (as when a photo also carries an XMP packet), which left `retainExif: true` output rotated twice
+* Corrected relative imports in the published `src/` to carry `.js` extensions, so the sources resolve under Node’s ESM loader
+* Fixed the type declarations leaking `Compressor` and `Compressor.Options` into the global scope of every project importing the package
+
+### Added
+
+* Added a named `Options` export to the type declarations, alongside the existing `Compressor.Options`
+* Added source maps for `dist/compressor.esm.js` and `dist/compressor.esm.min.js`, which resolve against the published `src/`
+* Exposed `compressorjs-next/dist/compressor.esm.min.js` through the `exports` map, so the minified build the README documents can be imported
+
+### Changed
+
+* **BREAKING:** Removed the UMD and CommonJS builds—the package is now ESM-only, shipping `dist/compressor.esm.js` and `dist/compressor.esm.min.js` (i.e., `require()` no longer resolves; use `import`, a bundler, or a `<script type="module">` tag)
+* Consolidated four near-identical `FileReader` blocks and four output-`File` constructions in `Compressor`, and reduced three separate JPEG segment parsers to one
+
 ## [2.0.6] - 2026-08-18
 
 ### Changed

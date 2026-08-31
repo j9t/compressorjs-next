@@ -1,7 +1,3 @@
-import {
-  WINDOW,
-} from './constants';
-
 /**
  * Check if the given value is a positive number.
  * @param {*} value - The value to check.
@@ -57,32 +53,60 @@ function getStringFromCharCode(dataView, start, length) {
   return str;
 }
 
-const { btoa } = WINDOW;
+/**
+ * Check if the given data view starts with a JPEG SOI marker.
+ * @param {DataView} dataView - The data to check.
+ * @returns {boolean} Returns `true` for JPEG data, else `false`.
+ */
+function isJPEG(dataView) {
+  return dataView.byteLength >= 4
+    && dataView.getUint8(0) === 0xFF
+    && dataView.getUint8(1) === 0xD8;
+}
 
 /**
- * Transform array buffer to Data URL.
- * @param {ArrayBuffer} arrayBuffer - The array buffer to transform.
- * @param {string} mimeType - The mime type of the Data URL.
- * @returns {string} The result Data URL.
+ * Walk the marker segments of a JPEG, from the SOI marker to the scan data.
+ * Segments must be walked by their declared length rather than scanned for
+ * byte-wise, as marker bytes also occur inside segment payloads and scan data.
+ * @param {DataView} dataView - The JPEG data to walk.
+ * @param {Function} callback - Called with `(type, start, end)` per segment,
+ *   where `end` is exclusive; return `false` to stop the walk.
  */
-export function arrayBufferToDataURL(arrayBuffer, mimeType) {
-  const uint8 = new Uint8Array(arrayBuffer);
-  const { length } = uint8;
-  const chunkSize = 8192;
-  let binary = '';
-
-  for (let i = 0; i < length; i += chunkSize) {
-    const end = Math.min(i + chunkSize, length);
-    let chunk = '';
-
-    for (let j = i; j < end; j += 1) {
-      chunk += fromCharCode(uint8[j]);
-    }
-
-    binary += chunk;
+function forEachSegment(dataView, callback) {
+  if (!isJPEG(dataView)) {
+    return;
   }
 
-  return `data:${mimeType};base64,${btoa(binary)}`;
+  const { byteLength } = dataView;
+  let start = 2;
+
+  while (start + 3 < byteLength) {
+    if (dataView.getUint8(start) !== 0xFF) {
+      break;
+    }
+
+    const type = dataView.getUint8(start + 1);
+
+    // SOS (Start of Scan)—the rest is image data
+    if (type === 0xDA) {
+      callback(type, start, byteLength);
+      break;
+    }
+
+    const segmentLength = dataView.getUint16(start + 2);
+
+    if (segmentLength < 2) {
+      break;
+    }
+
+    const end = start + 2 + segmentLength;
+
+    if (end > byteLength || callback(type, start, end) === false) {
+      break;
+    }
+
+    start = end;
+  }
 }
 
 /**
@@ -100,37 +124,30 @@ export function resetOrientation(arrayBuffer) {
     let app1Start;
     let ifdStart;
 
-    // Only handle JPEG image (start by 0xFFD8)
-    if (dataView.getUint8(0) === 0xFF && dataView.getUint8(1) === 0xD8) {
-      const length = dataView.byteLength;
-      let offset = 2;
-
-      while (offset + 1 < length) {
-        if (dataView.getUint8(offset) === 0xFF && dataView.getUint8(offset + 1) === 0xE1) {
-          app1Start = offset;
-          break;
-        }
-
-        offset += 1;
+    // A JPEG may carry several APP1 segments (an XMP packet alongside the Exif
+    // one, say), so match on the Exif identifier rather than the first APP1
+    forEachSegment(dataView, (type, start, end) => {
+      if (type === 0xE1 && end - start >= 18
+        && getStringFromCharCode(dataView, start + 4, 4) === 'Exif') {
+        app1Start = start;
+        return false;
       }
-    }
 
-    if (app1Start) {
-      const exifIDCode = app1Start + 4;
+      return true;
+    });
+
+    if (app1Start !== undefined) {
       const tiffOffset = app1Start + 10;
+      const endianness = dataView.getUint16(tiffOffset);
 
-      if (getStringFromCharCode(dataView, exifIDCode, 4) === 'Exif') {
-        const endianness = dataView.getUint16(tiffOffset);
+      littleEndian = endianness === 0x4949;
 
-        littleEndian = endianness === 0x4949;
+      if (littleEndian || endianness === 0x4D4D /* bigEndian */) {
+        if (dataView.getUint16(tiffOffset + 2, littleEndian) === 0x002A) {
+          const firstIFDOffset = dataView.getUint32(tiffOffset + 4, littleEndian);
 
-        if (littleEndian || endianness === 0x4D4D /* bigEndian */) {
-          if (dataView.getUint16(tiffOffset + 2, littleEndian) === 0x002A) {
-            const firstIFDOffset = dataView.getUint32(tiffOffset + 4, littleEndian);
-
-            if (firstIFDOffset >= 0x00000008) {
-              ifdStart = tiffOffset + firstIFDOffset;
-            }
+          if (firstIFDOffset >= 0x00000008) {
+            ifdStart = tiffOffset + firstIFDOffset;
           }
         }
       }
@@ -227,49 +244,20 @@ export function resetCanvasReliableCache() {
  */
 export function stripExif(arrayBuffer) {
   const dataView = new DataView(arrayBuffer);
-  const { byteLength } = dataView;
-  const pieces = [];
 
-  // Only handle JPEG data (starts with SOI marker FF D8)
-  if (byteLength < 4
-    || dataView.getUint8(0) !== 0xFF
-    || dataView.getUint8(1) !== 0xD8) {
+  if (!isJPEG(dataView)) {
     return new Uint8Array(arrayBuffer);
   }
 
   // Keep SOI marker
-  pieces.push(new Uint8Array(arrayBuffer, 0, 2));
-  let start = 2;
+  const pieces = [new Uint8Array(arrayBuffer, 0, 2)];
 
-  while (start + 3 < byteLength) {
-    const marker = dataView.getUint8(start);
-    const type = dataView.getUint8(start + 1);
-
-    if (marker !== 0xFF) break;
-
-    // SOS (Start of Scan)—the rest is image data, keep it all
-    if (type === 0xDA) {
-      pieces.push(new Uint8Array(arrayBuffer, start));
-      break;
-    }
-
-    if (start + 3 >= byteLength) break;
-
-    const segmentLength = dataView.getUint16(start + 2);
-
-    if (segmentLength < 2) break;
-
-    const segmentEnd = start + 2 + segmentLength;
-
-    if (segmentEnd > byteLength) break;
-
+  forEachSegment(dataView, (type, start, end) => {
     // Skip APP1 (EXIF) segments, keep everything else
     if (type !== 0xE1) {
-      pieces.push(new Uint8Array(arrayBuffer, start, segmentEnd - start));
+      pieces.push(new Uint8Array(arrayBuffer, start, end - start));
     }
-
-    start = segmentEnd;
-  }
+  });
 
   const totalLength = pieces.reduce((sum, piece) => sum + piece.length, 0);
   const result = new Uint8Array(totalLength);
@@ -342,36 +330,16 @@ export function getAdjustedSizes(
  */
 export function getExif(arrayBuffer) {
   const dataView = new DataView(arrayBuffer);
-  const { byteLength } = dataView;
   const exifArray = [];
-  let start = 0;
 
-  while (start + 3 < byteLength) {
-    const value = dataView.getUint8(start);
-    const next = dataView.getUint8(start + 1);
-
-    // SOS (Start of Scan)
-    if (value === 0xFF && next === 0xDA) {
-      break;
-    }
-
-    // SOI (Start of Image)
-    if (value === 0xFF && next === 0xD8) {
-      start += 2;
-    } else {
-      const segmentLength = dataView.getUint16(start + 2);
-      const end = start + segmentLength + 2;
-
-      // APP1 marker (EXIF)
-      if (value === 0xFF && next === 0xE1) {
-        for (let i = start; i < end && i < byteLength; i += 1) {
-          exifArray.push(dataView.getUint8(i));
-        }
+  forEachSegment(dataView, (type, start, end) => {
+    // APP1 marker (EXIF)
+    if (type === 0xE1) {
+      for (let i = start; i < end; i += 1) {
+        exifArray.push(dataView.getUint8(i));
       }
-
-      start = end;
     }
-  }
+  });
 
   return exifArray;
 }

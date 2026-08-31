@@ -21,7 +21,7 @@ Change the package name from `compressorjs` to `compressorjs-next` in your packa
 
 The API is otherwise the same, with these exceptions (as of 2.0.0—follow [the changelog](https://github.com/j9t/compressorjs-next/blob/main/CHANGELOG.md) from there):
 
-* ESM is now the default module format (CommonJS is still supported)
+* The package is ESM-only (as of 3.0.0; 2.x also shipped UMD and CommonJS builds)
 * The `checkOrientation` option has been removed, as all supported browsers now handle EXIF orientation natively
 * The default for `convertTypes` has changed from `['image/png']` to `[]`
 * The `noConflict()` method has been removed
@@ -31,11 +31,13 @@ The API is otherwise the same, with these exceptions (as of 2.0.0—follow [the 
 
 ```text
 dist/
-├── compressor.js        (UMD)
-├── compressor.min.js    (UMD, compressed)
-├── compressor.esm.js    (ES Module, default)
-└── compressor.common.js (CommonJS)
+├── compressor.esm.js     (ES Module)
+└── compressor.esm.min.js (ES Module, compressed)
 ```
+
+Both builds ship with source maps, which resolve against the published `src/`.
+
+The package is ESM-only. There is no UMD or CommonJS build, so `require()` does not resolve—use `import` (or a bundler) instead.
 
 ## Getting started
 
@@ -321,7 +323,17 @@ compressor.abort();
 
 ## Browser support
 
-Supports [browserslist `defaults`](https://browsersl.ist/#q=defaults).
+Supports [browserslist `defaults`](https://browsersl.ist/#q=defaults), every browser of which supports ES modules natively.
+
+Bundlers pick the package up through its `exports` field. To load it straight into a page, without a build step, use a module script:
+
+```html
+<script type="module">
+  import Compressor from './node_modules/compressorjs-next/dist/compressor.esm.js';
+
+  // …
+</script>
+```
 
 **Note:** When the browser’s canvas produces unreliable pixel data—as with Firefox’s `privacy.resistFingerprinting` setting or privacy-focused forks like LibreWolf—, compression, resizing, and format conversion are not possible. In this case, the library falls back to returning the original image with EXIF data stripped (JPEG) or unchanged (other formats).
 

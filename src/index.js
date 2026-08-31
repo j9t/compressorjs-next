@@ -1,7 +1,7 @@
-import DEFAULTS from './defaults';
+import DEFAULTS from './defaults.js';
 import {
   WINDOW,
-} from './constants';
+} from './constants.js';
 import {
   getAdjustedSizes,
   imageTypeToExtension,
@@ -14,11 +14,26 @@ import {
   insertExif,
   stripExif,
   uint8ArrayToBlob,
-} from './utilities';
+} from './utilities.js';
 
 const { ArrayBuffer, FileReader } = WINDOW;
 const URL = WINDOW.URL || WINDOW.webkitURL;
 const REGEXP_EXTENSION = /\.\w+$/;
+
+/**
+ * Wrap a blob as the output file.
+ * @param {Blob} blob - The blob to wrap.
+ * @param {string} name - The name of the output file.
+ * @param {string} type - The mime type of the output file.
+ * @param {number} [lastModified] - The modification time to stamp on the file.
+ * @returns {File} The output file.
+ */
+function toFile(blob, name, type, lastModified = Date.now()) {
+  return new File([blob], name, {
+    type,
+    lastModified,
+  });
+}
 
 /**
  * Creates a new image compressor.
@@ -77,39 +92,21 @@ export default class Compressor {
       this.canvasFallback = true;
       if (mimeType === 'image/jpeg' && !options.retainExif) {
         // Strip EXIF data directly from the binary to preserve privacy
-        const reader = new FileReader();
+        this.readAsArrayBuffer(file, {
+          subject: 'image',
+          onData: (arrayBuffer) => {
+            let blob;
 
-        this.reader = reader;
-        reader.onload = ({ target }) => {
-          if (this.aborted) return;
+            try {
+              blob = uint8ArrayToBlob(stripExif(arrayBuffer), mimeType);
+            } catch {
+              this.fail(new Error('Failed to process the image data.'));
+              return;
+            }
 
-          let blob;
-
-          try {
-            blob = uint8ArrayToBlob(stripExif(target.result), mimeType);
-          } catch {
-            this.fail(new Error('Failed to process the image data.'));
-            return;
-          }
-
-          const date = new Date();
-          const result = new File([blob], file.name || '', {
-            type: mimeType,
-            lastModified: date.getTime(),
-          });
-
-          this.succeed(result);
-        };
-        reader.onabort = () => {
-          this.fail(new Error('Aborted to read the image with FileReader.'));
-        };
-        reader.onerror = () => {
-          this.fail(new Error('Failed to read the image with FileReader.'));
-        };
-        reader.onloadend = () => {
-          this.reader = null;
-        };
-        reader.readAsArrayBuffer(file);
+            this.succeed(toFile(blob, file.name || '', mimeType));
+          },
+        });
       } else {
         // Non-JPEG: No EXIF to strip, return as-is
         // Defer callback to match the normal async flow
@@ -131,31 +128,19 @@ export default class Compressor {
         url: this.url,
       });
     } else {
-      const reader = new FileReader();
-
-      this.reader = reader;
-      reader.onload = ({ target }) => {
-        if (this.aborted) return;
-
-        // Normalize EXIF orientation to 1 before extracting, since the browser
-        // handles rotation natively via `image-orientation: from-image`
-        resetOrientation(target.result);
-        this.exif = getExif(target.result);
-        this.url = URL.createObjectURL(file);
-        this.load({
-          url: this.url,
-        });
-      };
-      reader.onabort = () => {
-        this.fail(new Error('Aborted to read the image with FileReader.'));
-      };
-      reader.onerror = () => {
-        this.fail(new Error('Failed to read the image with FileReader.'));
-      };
-      reader.onloadend = () => {
-        this.reader = null;
-      };
-      reader.readAsArrayBuffer(file);
+      this.readAsArrayBuffer(file, {
+        subject: 'image',
+        onData: (arrayBuffer) => {
+          // Normalize EXIF orientation to 1 before extracting, since the browser
+          // handles rotation natively via `image-orientation: from-image`
+          resetOrientation(arrayBuffer);
+          this.exif = getExif(arrayBuffer);
+          this.url = URL.createObjectURL(file);
+          this.load({
+            url: this.url,
+          });
+        },
+      });
     }
   }
 
@@ -355,7 +340,6 @@ export default class Compressor {
         result = file;
         strictFallback = true;
       } else {
-        const date = new Date();
         let name = file.name || '';
 
         // Convert the extension to match its type
@@ -366,10 +350,7 @@ export default class Compressor {
           );
         }
 
-        result = new File([result], name, {
-          type: result.type,
-          lastModified: date.getTime(),
-        });
+        result = toFile(result, name, result.type);
       }
     } else {
       // Returns original file if the result is null in some cases
@@ -380,63 +361,77 @@ export default class Compressor {
     // When strict returns the original file, it may still contain EXIF—strip it
     // asynchronously so the output is consistently EXIF-free across all browsers
     if (strictFallback && file.type === 'image/jpeg') {
+      const succeedStripped = (arrayBuffer) => {
+        const strippedBlob = uint8ArrayToBlob(stripExif(arrayBuffer), file.type);
+
+        this.succeed(toFile(
+          strippedBlob,
+          file.name || '',
+          file.type,
+          file.lastModified || Date.now(),
+        ));
+      };
+      const succeedOriginal = (err) => {
+        if (this.aborted) return;
+
+        console.warn(
+          `Compressor.js Next: Failed to strip EXIF from original file—returning original with EXIF intact${file.name ? ` [${file.name}]` : ''}${err?.message ? `: ${err.message}` : ''}`,
+        );
+
+        this.succeed(file);
+      };
+
       if (file.arrayBuffer) {
         file.arrayBuffer().then((arrayBuffer) => {
           if (this.aborted) return;
 
-          const strippedBlob = uint8ArrayToBlob(stripExif(arrayBuffer), file.type);
-          const stripped = new File([strippedBlob], file.name || '', {
-            type: file.type,
-            lastModified: file.lastModified || Date.now(),
-          });
-
-          this.succeed(stripped);
-        }).catch((err) => {
-          if (this.aborted) return;
-
-          console.warn(
-            `Compressor.js Next: Failed to strip EXIF from original file—returning original with EXIF intact${file.name ? ` [${file.name}]` : ''}${err?.message ? `: ${err.message}` : ''}`,
-          );
-
-          this.succeed(file);
-        });
+          succeedStripped(arrayBuffer);
+        }).catch(succeedOriginal);
       } else {
-        const reader = new FileReader();
-
-        this.reader = reader;
-        reader.onload = ({ target }) => {
-          if (this.aborted) return;
-
-          const strippedBlob = uint8ArrayToBlob(stripExif(target.result), file.type);
-          const stripped = new File([strippedBlob], file.name || '', {
-            type: file.type,
-            lastModified: file.lastModified || Date.now(),
-          });
-
-          this.succeed(stripped);
-        };
-        reader.onabort = () => {
-          this.fail(new Error('Aborted to read the original file with FileReader.'));
-        };
-        reader.onerror = () => {
-          if (this.aborted) return;
-
-          console.warn(
-            `Compressor.js Next: Failed to strip EXIF from original file—returning original with EXIF intact${file.name ? ` [${file.name}]` : ''}`,
-          );
-
-          this.succeed(file);
-        };
-        reader.onloadend = () => {
-          this.reader = null;
-        };
-        reader.readAsArrayBuffer(file);
+        this.readAsArrayBuffer(file, {
+          subject: 'original file',
+          onData: succeedStripped,
+          onError: () => succeedOriginal(),
+        });
       }
 
       return;
     }
 
     this.succeed(result);
+  }
+
+  /**
+   * Read a blob as an array buffer, routing reader failures through `fail()`.
+   * @param {Blob} blob - The blob to read.
+   * @param {Object} handlers - The read handlers.
+   * @param {string} handlers.subject - Names the blob in error messages.
+   * @param {Function} handlers.onData - Receives the array buffer.
+   * @param {Function} [handlers.onError] - Overrides the default read failure.
+   */
+  readAsArrayBuffer(blob, { subject, onData, onError }) {
+    const reader = new FileReader();
+
+    this.reader = reader;
+    reader.onload = ({ target }) => {
+      if (this.aborted) return;
+
+      try {
+        onData(target.result);
+      } catch (err) {
+        this.fail(err);
+      }
+    };
+    reader.onabort = () => {
+      this.fail(new Error(`Aborted to read the ${subject} with FileReader.`));
+    };
+    reader.onerror = onError || (() => {
+      this.fail(new Error(`Failed to read the ${subject} with FileReader.`));
+    });
+    reader.onloadend = () => {
+      this.reader = null;
+    };
+    reader.readAsArrayBuffer(blob);
   }
 
   readBlobAsArrayBuffer(blob, next) {
@@ -450,26 +445,10 @@ export default class Compressor {
         }, 0);
       });
     } else {
-      const reader = new FileReader();
-
-      this.reader = reader;
-      reader.onload = ({ target }) => {
-        try {
-          next(target.result);
-        } catch (err) {
-          if (!this.aborted) this.fail(err);
-        }
-      };
-      reader.onabort = () => {
-        this.fail(new Error('Aborted to read the compressed image with FileReader.'));
-      };
-      reader.onerror = () => {
-        this.fail(new Error('Failed to read the compressed image with FileReader.'));
-      };
-      reader.onloadend = () => {
-        this.reader = null;
-      };
-      reader.readAsArrayBuffer(blob);
+      this.readAsArrayBuffer(blob, {
+        subject: 'compressed image',
+        onData: next,
+      });
     }
   }
 

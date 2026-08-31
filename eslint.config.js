@@ -1,52 +1,32 @@
 import js from '@eslint/js';
 import globals from 'globals';
 
+const esm = { ecmaVersion: 'latest', sourceType: 'module' };
+
 export default [
   {
-    ignores: ['dist/**', 'docs/setup/**', 'coverage/**', '*.config.js', '*.config.cjs', 'test/*.cjs'],
+    ignores: ['dist/**', 'docs/setup/**', 'coverage/**', '*.config.js', '*.config.cjs'],
   },
   js.configs.recommended,
   {
     files: ['src/**/*.js'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      globals: globals.browser,
-    },
+    languageOptions: { ...esm, globals: globals.browser },
     rules: {
       'no-param-reassign': 'off',
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
   {
-    files: ['test/setup.js'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      globals: {
-        ...globals.browser,
-        window: 'writable',
-      },
-    },
+    // Runs in the browser, via Vitest browser mode
+    files: ['test/browser/**/*.js'],
+    languageOptions: { ...esm, globals: globals.browser },
     rules: {
       'no-param-reassign': 'off',
     },
   },
   {
-    files: ['test/specs/**/*.js'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      globals: {
-        ...globals.browser,
-        describe: 'readonly',
-        it: 'readonly',
-        expect: 'readonly',
-        Compressor: 'readonly',
-      },
-    },
-    rules: {
-      'no-param-reassign': 'off',
-    },
+    // Runs in Node, via the built-in test runner
+    files: ['test/node/**/*.js'],
+    languageOptions: { ...esm, globals: globals.node },
   },
 ];

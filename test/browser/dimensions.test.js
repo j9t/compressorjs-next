@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Compressor, loadImageAsBlob, compress, getImageDimensions, TEST_IMAGE, TEST_IMAGE_PNG } from '../setup.js';
+import { Compressor, loadImageAsBlob, compress, getImageDimensions, TEST_IMAGE, TEST_IMAGE_PNG } from './helpers.js';
 
 describe('dimension options', () => {
   describe('width', () => {

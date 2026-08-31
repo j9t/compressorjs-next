@@ -1,6 +1,6 @@
-window.addEventListener('DOMContentLoaded', function () {
-  var Compressor = window.Compressor;
+import Compressor from './compressor.esm.js';
 
+window.addEventListener('DOMContentLoaded', function () {
   var app = Vue.createApp({
     data: function () {
       var vm = this;
