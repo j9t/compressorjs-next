@@ -19,9 +19,10 @@ A JavaScript image compressor and converter. Uses the browser’s native [HTMLCa
 
 Change the package name from `compressorjs` to `compressorjs-next` in your package.json and imports (`import Compressor from 'compressorjs-next'`).
 
-The API is otherwise the same, with these exceptions (as of 2.0.0—follow [the changelog](https://github.com/j9t/compressorjs-next/blob/main/CHANGELOG.md) from there):
+The API is otherwise the same, with the following exceptions (see [the changelog](https://github.com/j9t/compressorjs-next/blob/main/CHANGELOG.md) for the full history):
 
-* The package is ESM-only (as of 3.0.0; 2.x also shipped UMD and CommonJS builds)
+* The package is ESM-only
+* The type declarations are an ES module, so `Compressor.Options` resolves only where the class is imported, and a named `Options` export is available as well
 * The `checkOrientation` option has been removed, as all supported browsers now handle EXIF orientation natively
 * The default for `convertTypes` has changed from `['image/png']` to `[]`
 * The `noConflict()` method has been removed
