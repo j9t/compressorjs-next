@@ -142,7 +142,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * Added `"sideEffects": false` for better tree-shaking support
 * Converted all test files to `async`/`await` pattern
 * Added unit tests for utility functions
-* Added tests for blob URL clean-up verification
+* Added tests for blob URL cleanup verification
 * Updated TypeScript declarations
 * Replaced `uglify-js` with `terser`
 * Migrated to ESLint flat config
