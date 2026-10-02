@@ -18,21 +18,20 @@
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-commonjs": "^29.0.3",
     "@rollup/plugin-node-resolve": "^16.0.3",
-    "@vitest/browser-playwright": "^5.0.1",
-    "@vitest/coverage-istanbul": "^5.0.1",
-    "del-cli": "^7.0.0",
+    "@vitest/browser-playwright": "^5.0.3",
+    "@vitest/coverage-istanbul": "^5.0.3",
     "eslint": "^10.11.0",
-    "globals": "^17.12.0",
+    "globals": "^17.13.0",
     "husky": "^9.1.7",
     "playwright": "^1.63.0",
-    "publint": "^0.3.24",
-    "rollup": "^4.63.5",
-    "stylelint": "^17.15.0",
+    "publint": "^0.3.25",
+    "rollup": "^4.63.6",
+    "stylelint": "^17.16.0",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-order": "^8.1.1",
     "terser": "^5.51.2",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.3"
   },
   "exports": {
     ".": {
@@ -84,7 +83,7 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "clean": "del-cli dist",
+    "clean": "node --input-type=module --eval \"import {rmSync} from 'fs';rmSync('dist',{recursive:true,force:true})\"",
     "compress": "terser dist/compressor.esm.js -o dist/compressor.esm.min.js -c -m --module --comments /^!/ --source-map \"content='dist/compressor.esm.js.map',url='compressor.esm.min.js.map'\"",
     "dev": "rollup -c -m -w & npx serve docs",
     "dist": "npm run build && npm run compress",
@@ -108,5 +107,5 @@
   "sideEffects": false,
   "type": "module",
   "types": "types/index.d.ts",
-  "version": "3.0.0"
+  "version": "3.0.1"
 }
