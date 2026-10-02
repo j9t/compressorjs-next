@@ -4,6 +4,12 @@ All notable changes to Compressor.js Next are documented in this file, which is 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] - 2026-10-02
+
+### Changed
+
+* Replaced the `del-cli`-based `clean` script with a native `fs.rmSync()` one-liner, removing the `del-cli` development dependency
+
 ## [3.0.0] - 2026-08-31
 
 ### Fixed
