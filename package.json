@@ -25,7 +25,7 @@
     "husky": "^9.1.7",
     "playwright": "^1.64.1",
     "publint": "^0.3.25",
-    "rollup": "^4.65.0",
+    "rollup": "^4.67.4",
     "stylelint": "^17.16.0",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-order": "^8.1.2",
