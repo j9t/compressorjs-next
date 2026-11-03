@@ -57,6 +57,8 @@
     "client-side",
     "compress",
     "compressor",
+    "compressorjs",
+    "compressorjs-next",
     "conversion",
     "converter",
     "image",
