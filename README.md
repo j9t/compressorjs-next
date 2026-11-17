@@ -8,14 +8,14 @@ A JavaScript image compressor and converter. Uses the browser’s native [HTMLCa
 
 ## Table of Contents
 
-* [Migrating from Compressor.js](#migrating-from-compressorjs)
+* [Migrating From Compressor.js](#migrating-from-compressorjs)
 * [Main Files](#main-files)
 * [Getting Started](#getting-started)
 * [Options](#options)
 * [Methods](#methods)
 * [Browser Support](#browser-support)
 
-## Migrating from Compressor.js
+## Migrating From Compressor.js
 
 Change the package name from `compressorjs` to `compressorjs-next` in your package.json and imports (`import Compressor from 'compressorjs-next'`).
 
