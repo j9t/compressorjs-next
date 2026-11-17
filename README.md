@@ -6,14 +6,14 @@ Modernized, optimized, and maintained fork of [Fengyuan Chen’s Compressor.js](
 
 A JavaScript image compressor and converter. Uses the browser’s native [HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) method to do the compression work, which means it is **lossy compression**, **asynchronous**, and has **different compression effects in different browsers**. Generally use this to precompress an image on the client side before uploading it.
 
-## Table of contents
+## Table of Contents
 
 * [Migrating from Compressor.js](#migrating-from-compressorjs)
-* [Main files](#main-files)
-* [Getting started](#getting-started)
+* [Main Files](#main-files)
+* [Getting Started](#getting-started)
 * [Options](#options)
 * [Methods](#methods)
-* [Browser support](#browser-support)
+* [Browser Support](#browser-support)
 
 ## Migrating from Compressor.js
 
@@ -28,7 +28,7 @@ The API is otherwise the same, with the following exceptions (see [the changelog
 * The `noConflict()` method has been removed
 * Internet Explorer is no longer supported
 
-## Main files
+## Main Files
 
 ```text
 dist/
@@ -40,7 +40,7 @@ Both builds ship with source maps, which resolve against the published `src/`.
 
 The package is ESM-only. There is no UMD or CommonJS build, so `require()` does not resolve—use `import` (or a bundler) instead.
 
-## Getting started
+## Getting Started
 
 ### Install
 
@@ -322,7 +322,7 @@ const compressor = new Compressor(file);
 compressor.abort();
 ```
 
-## Browser support
+## Browser Support
 
 Supports [browserslist `defaults`](https://browsersl.ist/#q=defaults), every browser of which supports ES modules natively.
 
