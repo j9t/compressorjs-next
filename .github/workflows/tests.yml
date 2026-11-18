@@ -19,8 +19,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-latest, windows-latest]
+        platform: [ubuntu-latest]
         node: ["lts/*", "current"]
+        include:
+          # Windows: One LTS job is enough
+          - platform: windows-latest
+            node: "lts/*"
     name: "Node ${{ matrix.node }} (${{ matrix.platform }})"
     runs-on: ${{ matrix.platform }}
     timeout-minutes: 10
