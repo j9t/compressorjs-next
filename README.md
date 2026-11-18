@@ -336,7 +336,7 @@ Bundlers pick the package up through its `exports` field. To load it straight in
 </script>
 ```
 
-**Note:** When the browser’s canvas produces unreliable pixel data—as with Firefox’s `privacy.resistFingerprinting` setting or privacy-focused forks like LibreWolf—, compression, resizing, and format conversion are not possible. In this case, the library falls back to returning the original image with EXIF data stripped (JPEG) or unchanged (other formats).
+**Note:** When the browser’s canvas produces unreliable pixel data—as with Firefox’s `privacy.resistFingerprinting` setting or privacy-focused forks like LibreWolf—compression, resizing, and format conversion are not possible. In this case, the library falls back to returning the original image with EXIF data stripped (JPEG) or unchanged (other formats).
 
 ***
 
